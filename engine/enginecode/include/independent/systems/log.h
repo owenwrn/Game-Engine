@@ -36,9 +36,9 @@ namespace Engine
 		
 
 	private:
+
 		static std::shared_ptr<spdlog::logger> s_consoleLogger; //!< Console logger
 		static std::shared_ptr<spdlog::logger> s_fileLogger; //!< File logger
-
 
 	};
 

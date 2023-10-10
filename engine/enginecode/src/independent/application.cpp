@@ -21,6 +21,9 @@ namespace Engine {
 		m_logSystem.reset(new Log);
 		m_logSystem->start();
 
+		// reset timer
+		m_timer.reset(new ChronoTimer);
+		m_timer->start();
 	}
 
 	Application::~Application()
@@ -35,10 +38,13 @@ namespace Engine {
 
 	void Application::run()
 	{
+		float timestep = 0.1f;
 		while (m_running)
 		{
-			Log::trace("Hello world! {0} {1}", 42, "my name is");
-
+			timestep = m_timer->getTimeElapsed();
+			m_timer->reset();
+			Log::trace("FPS {0}", 1.0f / timestep);
+			
 		};
 	}
 
