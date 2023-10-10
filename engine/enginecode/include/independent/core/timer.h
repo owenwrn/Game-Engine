@@ -6,14 +6,26 @@
 namespace Engine
 {
 	/**
+	\class Time - Interface class for timer
+	*/
+
+	class Timer
+	{
+	public:
+		virtual void start() = 0; //!< Start the timer
+		virtual void reset() = 0; //!< Reset the timer
+		virtual float getTimeElapsed() = 0; //!< Get the time elapsed since last start or reset
+	};
+
+	/**
 	\class Time - chrono timer class
 	*/
 
-	class ChronoTimer
+	class ChronoTimer : public Timer
 	{
 	public:
-		inline void start() { m_startPoint = std::chrono::high_resolution_clock::now(); }
-		inline void reset() { m_startPoint = std::chrono::high_resolution_clock::now(); }
+		virtual inline void start() override { m_startPoint = std::chrono::high_resolution_clock::now(); }
+		virtual inline void reset() override { m_startPoint = std::chrono::high_resolution_clock::now(); }
 		float getTimeElapsed()
 		{
 			m_endPoint = std::chrono::high_resolution_clock::now();
