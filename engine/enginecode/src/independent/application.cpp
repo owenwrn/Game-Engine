@@ -37,7 +37,7 @@ namespace Engine {
 	{
 		while (m_running)
 		{
-			Log::file("Hello world! {0} {1}", 42, "my name is");
+			Log::trace("Hello world! {0} {1}", 42, "my name is");
 
 		};
 	}

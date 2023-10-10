@@ -17,15 +17,23 @@ namespace Engine {
 
 		char filepath[256] = "logs/";
 		char time[128];
+		/*
+		try
+		{
+			std::time_t t = std::time(nullptr);
+			std::strftime(time, sizeof(time), "%d_%m_%y %I_%M_%S", std::localtime(&t));
 
-		
-		std::time_t t = std::time(nullptr);
-		std::strftime(time, sizeof(time), "%d_%m_%y %I_%M_%S", std::localtime(&t));
+			strcat_s(filepath, time);
+			strcat_s(filepath, ".txt");
 
-		strcat_s(filepath, time);
-		strcat_s(filepath, ".txt");
-
-		s_fileLogger = spdlog::basic_logger_mt("File",filepath);
+			s_fileLogger = spdlog::basic_logger_mt("File", filepath);
+		}
+		catch (const spdlog::spdlog_ex& e)
+		{
+			s_consoleLogger->error("Could not start file logger: {0}", e.what());
+			s_consoleLogger.reset();
+		}
+		*/
 	}
 
 	void Log::stop(SystemSignal close, ...)
