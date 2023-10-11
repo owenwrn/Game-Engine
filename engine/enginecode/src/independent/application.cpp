@@ -32,6 +32,15 @@ namespace Engine {
 		m_timer.reset(new ChronoTimer);
 #endif
 		m_timer->start();
+
+		// Set up callbacks
+		m_eventHandler.setOnWinClose([this](const WindowCloseEvent& e) {this->onClose(e); });
+	}
+
+	void Application::onClose(const WindowCloseEvent& e)
+	{
+		Log::info("Shutting down");
+		m_running = false;
 	}
 
 	Application::~Application()
@@ -47,12 +56,21 @@ namespace Engine {
 	void Application::run()
 	{
 		float timestep = 0.1f;
+		float acc = 0;
 		while (m_running)
 		{
 			timestep = m_timer->getTimeElapsed();
+			acc += timestep;
 			m_timer->reset();
 			Log::trace("FPS {0}", 1.0f / timestep);
 			
+			if (acc > 3.f)
+			{
+				auto& callback = m_eventHandler.getOnWinClose();
+				WindowCloseEvent wce;
+
+				callback(wce);
+			}
 		};
 	}
 
