@@ -52,15 +52,18 @@ namespace Engine
 	class WindowMovedEvent : public Event
 	{
 	public:
-		WindowMovedEvent(int xpos, int ypos) {
+		WindowMovedEvent(int32_t xpos, int32_t ypos) {
 			m_eventType = EventType::WindowResize;
 			m_catFlags = EventCategory::Input | EventCategory::Window;
 			m_x = xpos;
 			m_y = ypos;
 		}
+
+		int32_t getX() const { return m_x; }
+		int32_t getY() const { return m_y; }
 	protected:
-		int m_x;
-		int m_y;
+		int32_t m_x;
+		int32_t m_y;
 	};
 
 }
