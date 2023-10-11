@@ -1,4 +1,4 @@
-/** \file windows.h */
+/** \file windowEvent.h */
 #pragma once
 
 #include "event.h"
@@ -23,9 +23,12 @@ namespace Engine
 			m_width = width;
 			m_height = height;
 		}
+		int32_t getWidth() const { return m_width; }
+		int32_t getHeight() const { return m_height; }
+		
 	protected:
-		int m_width;
-		int m_height;
+		int32_t m_width;
+		int32_t m_height;
 	};
 
 	class WindowFocusEvent : public Event

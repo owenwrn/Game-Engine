@@ -34,7 +34,9 @@ namespace Engine {
 		m_timer->start();
 
 		// Set up callbacks
-		m_eventHandler.setOnWinClose([this](const WindowCloseEvent& e) {this->onClose(e); });
+		m_eventHandler.setOnWinClose([this](WindowCloseEvent& e) {this->onClose(e); });
+		m_eventHandler.setOnWinResize([this](WindowResizeEvent& e) { Log::info("Window Resize ({}, {})",e.getWidth(), e.getHeight()); });
+		m_eventHandler.setOnWinFocus([this](WindowFocusEvent& e) { Log::info("Window Focus"); });
 	}
 
 	void Application::onClose(const WindowCloseEvent& e)
@@ -42,6 +44,8 @@ namespace Engine {
 		Log::info("Shutting down");
 		m_running = false;
 	}
+
+
 
 	Application::~Application()
 	{
@@ -71,6 +75,16 @@ namespace Engine {
 
 				callback(wce);
 			}
+
+			auto& callbackFocus = m_eventHandler.getOnWinFocus();
+			WindowFocusEvent wfe;
+
+			callbackFocus(wfe);
+
+			auto& callbackResize = m_eventHandler.getOnWinResize();
+			WindowResizeEvent wre(800, 600);
+
+			callbackResize(wre);
 		};
 	}
 
