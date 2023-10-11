@@ -5,10 +5,10 @@
 
 namespace Engine
 {
-	class KeyEvent : public Event
+	class KeyPressedEvent : public Event
 	{
 	public:
-		KeyEvent(int32_t code, int32_t count) :
+		KeyPressedEvent(int32_t code, int32_t count) :
 			Event(EventType::KeyPressed, EventCategory::Keyboard | EventCategory::Input),
 			m_keyCode (code),
 			m_repeatCount(count)
@@ -16,5 +16,27 @@ namespace Engine
 	protected:
 		int32_t m_keyCode; //!< Lib specific code
 		int32_t m_repeatCount; //!< Repeat count for key
+	};
+
+	class KeyReleasedEvent : public Event
+	{
+	public:
+		KeyReleasedEvent(int32_t code) :
+			Event(EventType::KeyPressed, EventCategory::Keyboard | EventCategory::Input),
+			m_keyCode(code)
+			{}
+	protected:
+		int32_t m_keyCode; //!< Lib specific code
+	};
+
+	class KeyTypeEvent : public Event
+	{
+	public:
+		KeyTypeEvent(int32_t code) :
+			Event(EventType::KeyPressed, EventCategory::Keyboard | EventCategory::Input),
+			m_keyCode(code)
+		{}
+	protected:
+		int32_t m_keyCode; //!< Lib specific code
 	};
 }
