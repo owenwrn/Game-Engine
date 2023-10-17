@@ -8,6 +8,10 @@
 #include "platform/windows/winTimer.h"
 #endif
 
+#ifdef NG_PLATFORM_WINDOWS
+#include "platform/GLFW/GLFWSystem.h"
+#endif
+
 namespace Engine {
 	// Set static vars
 	Application* Application::s_instance = nullptr;
@@ -24,6 +28,13 @@ namespace Engine {
 		// Start log
 		m_logSystem.reset(new Log);
 		m_logSystem->start();
+
+		//Start the windows System
+#ifdef NG_PLATFORM_WINDOWS
+		m_windowsSystem.reset(new GLFWSystem);
+#endif
+		m_windowsSystem->start();
+
 
 		// reset timer
 #ifdef NG_PLATFORM_WINDOWS
@@ -54,37 +65,20 @@ namespace Engine {
 
 		// Stop log
 		m_logSystem->stop();
+		// Stop windows system
+		m_windowsSystem->stop();
 	}
 
 
 	void Application::run()
 	{
 		float timestep = 0.1f;
-		float acc = 0;
 		while (m_running)
 		{
 			timestep = m_timer->getTimeElapsed();
-			acc += timestep;
 			m_timer->reset();
 			Log::trace("FPS {0}", 1.0f / timestep);
-			
-			if (acc > 3.f)
-			{
-				auto& callback = m_eventHandler.getOnWinClose();
-				WindowCloseEvent wce;
-
-				callback(wce);
-			}
-
-			auto& callbackFocus = m_eventHandler.getOnWinFocus();
-			WindowFocusEvent wfe;
-
-			callbackFocus(wfe);
-
-			auto& callbackResize = m_eventHandler.getOnWinResize();
-			WindowResizeEvent wre(800, 600);
-
-			callbackResize(wre);
+		
 		};
 	}
 

@@ -4,8 +4,9 @@
 
 #include "systems/log.h"
 #include "timer.h"
-#include "eventHandler.h"
-#include "events.h"
+#include "events/eventHandler.h"
+#include "events/events.h"
+
 
 namespace Engine {
 
@@ -22,6 +23,7 @@ namespace Engine {
 
 		std::shared_ptr<Log> m_logSystem; //!< Log system
 		std::shared_ptr<Timer> m_timer; //!< Timer
+		std::shared_ptr<System> m_windowsSystem; //!< Windows System
 
 		void onClose(const WindowCloseEvent & e);
 
