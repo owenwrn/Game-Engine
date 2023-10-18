@@ -6,6 +6,7 @@
 #include "timer.h"
 #include "events/eventHandler.h"
 #include "events/events.h"
+#include "window.h"
 
 
 namespace Engine {
@@ -22,9 +23,10 @@ namespace Engine {
 		Application(); //!< Constructor
 
 		std::shared_ptr<Log> m_logSystem; //!< Log system
-		std::shared_ptr<Timer> m_timer; //!< Timer
 		std::shared_ptr<System> m_windowsSystem; //!< Windows System
+		std::shared_ptr<WindowBase> m_window; //!< Window
 
+	std::shared_ptr<Timer> m_timer; //!< Timer
 		void onClose(const WindowCloseEvent & e);
 
 	private:

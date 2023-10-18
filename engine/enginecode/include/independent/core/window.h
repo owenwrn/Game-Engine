@@ -11,17 +11,17 @@ namespace Engine
 
 	struct WindowProperties
 	{
-		char* m_title;
-		unsigned int m_width;
-		unsigned int m_height;
-		bool m_isFullScreen;
-		bool m_isVsync;
+		char* title;
+		uint32_t width;
+		uint32_t height;
+		bool isFullScreen;
+		bool isVsync;
 
-		WindowProperties(char* title = "My Window", unsigned int width = 800, unsigned int height = 600, bool fullscreen = false) : 
-			m_title(title),
-			m_width(width),
-			m_height(height), 
-			m_isFullScreen(fullscreen)
+		WindowProperties(char* title = "My Window", uint32_t width = 800, uint32_t height = 600, bool fullscreen = false) :
+			title(title),
+			width(width),
+			height(height), 
+			isFullScreen(fullscreen)
 		{}
 	};
 

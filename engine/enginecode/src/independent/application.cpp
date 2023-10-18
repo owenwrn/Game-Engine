@@ -44,6 +44,9 @@ namespace Engine {
 #endif
 		m_timer->start();
 
+		WindowProperties props("My Game Engine", 1024, 800);
+		m_window.reset(WindowBase::create(props));
+
 		// Set up callbacks
 		m_eventHandler.setOnWinClose([this](WindowCloseEvent& e) {this->onClose(e); });
 		m_eventHandler.setOnWinResize([this](WindowResizeEvent& e) { Log::info("Window Resize ({}, {})",e.getWidth(), e.getHeight()); });
