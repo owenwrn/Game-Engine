@@ -2,6 +2,7 @@
 */
 
 #include "engine_pch.h"
+#include <glad/glad.h>
 #include "core/application.h"
 
 #ifdef NG_PLATFORM_WINDOWS
@@ -101,11 +102,16 @@ namespace Engine {
 	void Application::run()
 	{
 		float timestep = 0.1f;
+
+		glEnable(GL_DEPTH);
+		glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
 		while (m_running)
 		{
 			timestep = m_timer->getTimeElapsed();
 			m_timer->reset();
-			Log::trace("FPS {0}", 1.0f / timestep);
+			//Log::trace("FPS {0}", 1.0f / timestep);
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			m_window->onUpdate(timestep);
 		
