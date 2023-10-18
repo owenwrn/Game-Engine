@@ -60,6 +60,17 @@ namespace Engine {
 			}
 			);
 
+		glfwSetWindowPosCallback(m_native,
+			[](GLFWwindow* window, int newX, int newY)
+			{
+				EventHandler* handler = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
+				auto& onMove = handler->getOnWinMoved();
+
+				WindowMovedEvent e(newX, newY);
+				onMove(e);
+			}
+		);
+
 		glfwSetKeyCallback(m_native,
 			[](GLFWwindow* window, int keyCode, int scancode, int action, int mod)
 			{
@@ -89,6 +100,41 @@ namespace Engine {
 				
 			}
 		);
+
+		glfwSetMouseButtonCallback(m_native,
+			[](GLFWwindow* window, int code, int action, int mod)
+			{
+				EventHandler* handler = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
+
+				if (action == GLFW_PRESS)
+				{
+					auto& onMouseButtonPress = handler->getOnMouseButtonPressed();
+
+					MouseButtonPressedEvent e(code);
+					onMouseButtonPress(e);
+				}
+				else if (action == GLFW_RELEASE)
+				{
+					auto& onMouseButtonRelease = handler->getOnMouseButtonReleased();
+
+					MouseButtonReleasedEvent e(code);
+					onMouseButtonRelease(e);
+				}
+
+			}
+		);
+
+		glfwSetCursorPosCallback(m_native,
+			[](GLFWwindow* window, double newX, double newY)
+			{
+				EventHandler* handler = static_cast<EventHandler*>(glfwGetWindowUserPointer(window));
+				auto& onMouseMove = handler->getOnMouseMoved();
+
+				MouseMovedEvent e(static_cast<int32_t>(newX), static_cast<int32_t>(newY));
+				onMouseMove(e);
+			}
+		);
+
 	}
 
 	void GLFWWindowImp::close()

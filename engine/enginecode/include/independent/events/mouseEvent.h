@@ -11,6 +11,7 @@ namespace Engine
 			Event(EventType::MoueButtonPressed, EventCategory::MouseButton | EventCategory::Input),
 			m_code(code)
 		{}
+		int32_t getCode() { return m_code; }
 	protected:
 		int32_t m_code; //!< Lib specific code
 	};
@@ -22,6 +23,7 @@ namespace Engine
 			Event(EventType::MouseButtonReleased, EventCategory::MouseButton | EventCategory::Input),
 			m_code(code)
 		{}
+		int32_t getCode() { return m_code; }
 	protected:
 		int32_t m_code; //!< Lib specific code
 	};

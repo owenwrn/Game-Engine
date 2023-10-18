@@ -51,8 +51,13 @@ namespace Engine {
 		// Set up callbacks
 		m_window->getEventHandler().setOnWinClose(std::bind(&Application::onClose, this, std::placeholders::_1));
 		m_window->getEventHandler().setOnWinResize(std::bind(&Application::onResize, this, std::placeholders::_1));
+		m_window->getEventHandler().setOnWinMoved(std::bind(&Application::onMove, this, std::placeholders::_1));
 		m_window->getEventHandler().setOnKeyPressed(std::bind(&Application::onKeyPressed, this, std::placeholders::_1));
 		m_window->getEventHandler().setOnKeyReleased(std::bind(&Application::onKeyReleased, this, std::placeholders::_1));
+		m_window->getEventHandler().setOnMouseButtonPressed(std::bind(&Application::onMouseButtonPressed, this, std::placeholders::_1));
+		m_window->getEventHandler().setOnMouseButtonReleased(std::bind(&Application::onMouseButtonReleased, this, std::placeholders::_1));
+		m_window->getEventHandler().setOnMouseMoved(std::bind(&Application::onMouseMove, this, std::placeholders::_1));
+
 
 	
 		
@@ -71,6 +76,13 @@ namespace Engine {
 		return e.handled();;
 	}
 
+	bool Application::onMove(WindowMovedEvent& e)
+	{
+		e.handle(true);
+		Log::info("Window Move event: ({0}, {1})", e.getX(), e.getY());
+		return e.handled();;
+	}
+
 	bool Application::onKeyPressed(KeyPressedEvent& e)
 	{
 		e.handle(true);
@@ -82,6 +94,27 @@ namespace Engine {
 	{
 		e.handle(true);
 		Log::info("Key released event: key: {0}", e.getKeyCode());
+		return e.handled();;
+	}
+
+	bool Application::onMouseButtonPressed(MouseButtonPressedEvent& e)
+	{
+		e.handle(true);
+		Log::info("Mouse button pressed event: key: {0}", e.getCode());
+		return e.handled();;
+	}
+
+	bool Application::onMouseButtonReleased(MouseButtonReleasedEvent& e)
+	{
+		e.handle(true);
+		Log::info("Mouse button released event: key: {0}", e.getCode());
+		return e.handled();;
+	}
+
+	bool Application::onMouseMove(MouseMovedEvent& e)
+	{
+		e.handle(true);
+		Log::info("Mouse Move event: ({0}, {1})", e.getX(), e.getY());
 		return e.handled();;
 	}
 
