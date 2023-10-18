@@ -27,7 +27,11 @@ namespace Engine {
 		std::shared_ptr<WindowBase> m_window; //!< Window
 
 	std::shared_ptr<Timer> m_timer; //!< Timer
-		void onClose(const WindowCloseEvent & e);
+
+		void onClose(WindowCloseEvent & e); //!< Run when the window is closed
+		bool onResize(WindowResizeEvent& e); //!< Run when the window is resized
+		bool onKeyPressed(KeyPressedEvent& e); //!< Run when the key is pressed
+		bool onKeyReleased(KeyReleasedEvent& e); //!< Run when the key is released
 
 	private:
 		static Application* s_instance; //!< Singleton instance of the application

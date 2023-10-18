@@ -48,15 +48,40 @@ namespace Engine {
 		m_window.reset(WindowBase::create(props));
 
 		// Set up callbacks
-		m_eventHandler.setOnWinClose([this](WindowCloseEvent& e) {this->onClose(e); });
-		m_eventHandler.setOnWinResize([this](WindowResizeEvent& e) { Log::info("Window Resize ({}, {})",e.getWidth(), e.getHeight()); });
-		m_eventHandler.setOnWinFocus([this](WindowFocusEvent& e) { Log::info("Window Focus"); });
+		m_window->getEventHandler().setOnWinClose(std::bind(&Application::onClose, this, std::placeholders::_1));
+		m_window->getEventHandler().setOnWinResize(std::bind(&Application::onResize, this, std::placeholders::_1));
+		m_window->getEventHandler().setOnKeyPressed(std::bind(&Application::onKeyPressed, this, std::placeholders::_1));
+		m_window->getEventHandler().setOnKeyReleased(std::bind(&Application::onKeyReleased, this, std::placeholders::_1));
+
+	
+		
 	}
 
-	void Application::onClose(const WindowCloseEvent& e)
+	void Application::onClose(WindowCloseEvent& e)
 	{
 		Log::info("Shutting down");
 		m_running = false;
+	}
+
+	bool Application::onResize(WindowResizeEvent& e)
+	{
+		e.handle(true);
+		Log::info("Window Resize event: ({0}, {1})", e.getWidth(), e.getHeight());
+		return e.handled();;
+	}
+
+	bool Application::onKeyPressed(KeyPressedEvent& e)
+	{
+		e.handle(true);
+		Log::info("Key pressed event: key: {0}, repeat: {1}", e.getKeyCode(), e.getRepeatCount());
+		return e.handled();;
+	}
+
+	bool Application::onKeyReleased(KeyReleasedEvent& e)
+	{
+		e.handle(true);
+		Log::info("Key released event: key: {0}", e.getKeyCode());
+		return e.handled();;
 	}
 
 
@@ -81,6 +106,8 @@ namespace Engine {
 			timestep = m_timer->getTimeElapsed();
 			m_timer->reset();
 			Log::trace("FPS {0}", 1.0f / timestep);
+
+			m_window->onUpdate(timestep);
 		
 		};
 	}

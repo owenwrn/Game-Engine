@@ -13,6 +13,8 @@ namespace Engine
 			m_keyCode (code),
 			m_repeatCount(count)
 		{}
+		int32_t getKeyCode() { return m_keyCode; }
+		int32_t getRepeatCount() { return m_repeatCount; }
 	protected:
 		int32_t m_keyCode; //!< Lib specific code
 		int32_t m_repeatCount; //!< Repeat count for key
@@ -25,6 +27,7 @@ namespace Engine
 			Event(EventType::KeyPressed, EventCategory::Keyboard | EventCategory::Input),
 			m_keyCode(code)
 			{}
+		int32_t getKeyCode() { return m_keyCode; }
 	protected:
 		int32_t m_keyCode; //!< Lib specific code
 	};
