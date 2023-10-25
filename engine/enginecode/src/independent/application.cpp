@@ -72,49 +72,49 @@ namespace Engine {
 	bool Application::onResize(WindowResizeEvent& e)
 	{
 		e.handle(true);
-		Log::info("Window Resize event: ({0}, {1})", e.getWidth(), e.getHeight());
+		//Log::info("Window Resize event: ({0}, {1})", e.getWidth(), e.getHeight());
 		return e.handled();;
 	}
 
 	bool Application::onMove(WindowMovedEvent& e)
 	{
 		e.handle(true);
-		Log::info("Window Move event: ({0}, {1})", e.getX(), e.getY());
+		//Log::info("Window Move event: ({0}, {1})", e.getX(), e.getY());
 		return e.handled();;
 	}
 
 	bool Application::onKeyPressed(KeyPressedEvent& e)
 	{
 		e.handle(true);
-		Log::info("Key pressed event: key: {0}, repeat: {1}", e.getKeyCode(), e.getRepeatCount());
+		//Log::info("Key pressed event: key: {0}, repeat: {1}", e.getKeyCode(), e.getRepeatCount());
 		return e.handled();;
 	}
 
 	bool Application::onKeyReleased(KeyReleasedEvent& e)
 	{
 		e.handle(true);
-		Log::info("Key released event: key: {0}", e.getKeyCode());
+		//Log::info("Key released event: key: {0}", e.getKeyCode());
 		return e.handled();;
 	}
 
 	bool Application::onMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
 		e.handle(true);
-		Log::info("Mouse button pressed event: key: {0}", e.getCode());
+		//Log::info("Mouse button pressed event: key: {0}", e.getCode());
 		return e.handled();;
 	}
 
 	bool Application::onMouseButtonReleased(MouseButtonReleasedEvent& e)
 	{
 		e.handle(true);
-		Log::info("Mouse button released event: key: {0}", e.getCode());
+		//Log::info("Mouse button released event: key: {0}", e.getCode());
 		return e.handled();;
 	}
 
 	bool Application::onMouseMove(MouseMovedEvent& e)
 	{
 		e.handle(true);
-		Log::info("Mouse Move event: ({0}, {1})", e.getX(), e.getY());
+		//Log::info("Mouse Move event: ({0}, {1})", e.getX(), e.getY());
 		return e.handled();;
 	}
 
@@ -136,7 +136,7 @@ namespace Engine {
 	{
 		float timestep = 0.1f;
 
-		glEnable(GL_DEPTH);
+		glEnable(GL_DEPTH_TEST);
 		glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
 		while (m_running)
 		{
@@ -144,10 +144,13 @@ namespace Engine {
 			m_timer->reset();
 			//Log::trace("FPS {0}", 1.0f / timestep);
 
+			
+
+			//if (InputPoller::isMouseButtonPressed(NG_MOUSE_BUTTON_1))
+				//Log::info("Left Mouse Button");
+
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			if (InputPoller::isMouseButtonPressed(NG_MOUSE_BUTTON_1))
-				Log::info("Left Mouse Button");
 			m_window->onUpdate(timestep);
 		
 		};
