@@ -58,8 +58,8 @@ namespace Engine {
 		m_window->getEventHandler().setOnMouseButtonReleased(std::bind(&Application::onMouseButtonReleased, this, std::placeholders::_1));
 		m_window->getEventHandler().setOnMouseMoved(std::bind(&Application::onMouseMove, this, std::placeholders::_1));
 
-
-	
+		// Set input poller
+		InputPoller::setNativeWindow(m_window->getNativeWindow());
 		
 	}
 
@@ -146,6 +146,8 @@ namespace Engine {
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+			if (InputPoller::isMouseButtonPressed(NG_MOUSE_BUTTON_1))
+				Log::info("Left Mouse Button");
 			m_window->onUpdate(timestep);
 		
 		};

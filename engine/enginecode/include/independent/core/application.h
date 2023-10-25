@@ -7,6 +7,7 @@
 #include "events/eventHandler.h"
 #include "events/events.h"
 #include "window.h"
+#include "platform/GLFW/inputPoller.h"
 
 
 namespace Engine {
