@@ -3,10 +3,14 @@
 
 #include "engine_pch.h"
 #include <glad/glad.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <filesystem>
 #include "core/application.h"
 
 #ifdef NG_PLATFORM_WINDOWS
 #include "platform/windows/winTimer.h"
+#include "platform/GLFW/GLFWWindowImp.h"
 #endif
 
 #ifdef NG_PLATFORM_WINDOWS
@@ -558,23 +562,100 @@ namespace Engine {
 		}
 		stbi_image_free(data);
 #pragma endregion
+		glm::mat4 view = glm::lookAt(
+			glm::vec3(0.f, 0.f, 0.f),
+			glm::vec3(0.f, 0.f, -1.f),
+			glm::vec3(0.f, 1.f, 0.f)
+		);
+		glm::mat4 projection = glm::perspective(glm::radians(45.f), 1024.f / 800.f, 0.1f, 100.f);
 
-		float timestep = 0.1f;
+		glm::vec3 pos(-2.0f, 0.f, -6.f);
+		float rot = 0.f;
+		glm::mat4 models[3];
+		models[0] = glm::translate(glm::mat4(1.0f), glm::vec3(-2.f, 0.f, -6.f));
+		models[1] = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, -6.f));
+		models[2] = glm::translate(glm::mat4(1.0f), glm::vec3(2.f, 0.f, -6.f));
 
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+
+		float timestep = 0.1f;
+
 		while (m_running)
 		{
 			timestep = m_timer->getTimeElapsed();
 			m_timer->reset();
 			//Log::trace("FPS {0}", 1.0f / timestep);
 
+			models[0] = glm::translate(glm::mat4(1.0f), pos) * glm::rotate(glm::mat4(1.0f), rot, glm::vec3(0.f, 1.0f, 0.f));
+
+			if (InputPoller::isKeyPressed(NG_KEY_A)) { pos.x -= timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_D)) { pos.x += timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_W)) { pos.y -= timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_S)) { pos.y += timestep, 0.f, 0.f; }
 			
+			if (InputPoller::isKeyPressed(NG_KEY_Q)) { rot += timestep; }
+			if (InputPoller::isKeyPressed(NG_KEY_E)) { rot -= timestep; }
+
+			//for (auto& model : models) { model = glm::rotate(model, timestep, glm::vec3(0.f, 1.0, 0.f)); }
+			models[1] = glm::rotate(models[1], timestep, glm::vec3(0.f, 1.0f, 0.f));
+			models[2] = glm::rotate(models[2], timestep, glm::vec3(0.f, 1.0f, 0.f));
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			glUseProgram(FCprogram);
+			glBindVertexArray(pyramidVAO);
+
+			GLuint uniformLocation;
+
+			uniformLocation = glGetUniformLocation(FCprogram, "u_model");
+			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(models[0])); // Must include <glm/gtc/type_ptr.hpp>
+
+			uniformLocation = glGetUniformLocation(FCprogram, "u_view");
+			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(view));
+
+			uniformLocation = glGetUniformLocation(FCprogram, "u_projection");
+			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(projection));
+
+			glDrawElements(GL_TRIANGLES, 3 * 6, GL_UNSIGNED_INT, nullptr);
+
+			glUseProgram(TPprogram);
+			glBindVertexArray(cubeVAO);
+
+			uniformLocation = glGetUniformLocation(TPprogram, "u_model");
+			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(models[1]));
+
+			uniformLocation = glGetUniformLocation(TPprogram, "u_view");
+			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(view));
+
+			uniformLocation = glGetUniformLocation(TPprogram, "u_projection");
+			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(projection));
+
+			uniformLocation = glGetUniformLocation(TPprogram, "u_lightColour");
+			glUniform3f(uniformLocation, 1.f, 1.f, 1.f);
+
+			uniformLocation = glGetUniformLocation(TPprogram, "u_lightPos");
+			glUniform3f(uniformLocation, 1.f, 4.f, 6.f);
+
+			uniformLocation = glGetUniformLocation(TPprogram, "u_viewPos");
+			glUniform3f(uniformLocation, 0.f, 0.f, 0.f);
+
+			uniformLocation = glGetUniformLocation(TPprogram, "u_texData");
+			glUniform1i(uniformLocation, 0);
+
+			glDrawElements(GL_TRIANGLES, 3 * 12, GL_UNSIGNED_INT, nullptr);
+
+			uniformLocation = glGetUniformLocation(TPprogram, "u_model");
+			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(models[2]));
+
+			uniformLocation = glGetUniformLocation(TPprogram, "u_texData");
+			glUniform1i(uniformLocation, 1);
+
+			glDrawElements(GL_TRIANGLES, 3 * 12, GL_UNSIGNED_INT, nullptr);
 
 			//if (InputPoller::isMouseButtonPressed(NG_MOUSE_BUTTON_1))
 				//Log::info("Left Mouse Button");
 
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			m_window->onUpdate(timestep);
 		
