@@ -591,8 +591,8 @@ namespace Engine {
 
 			if (InputPoller::isKeyPressed(NG_KEY_A)) { pos.x -= timestep, 0.f, 0.f; }
 			if (InputPoller::isKeyPressed(NG_KEY_D)) { pos.x += timestep, 0.f, 0.f; }
-			if (InputPoller::isKeyPressed(NG_KEY_W)) { pos.y -= timestep, 0.f, 0.f; }
-			if (InputPoller::isKeyPressed(NG_KEY_S)) { pos.y += timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_W)) { pos.y += timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_S)) { pos.y -= timestep, 0.f, 0.f; }
 			
 			if (InputPoller::isKeyPressed(NG_KEY_Q)) { rot += timestep; }
 			if (InputPoller::isKeyPressed(NG_KEY_E)) { rot -= timestep; }
