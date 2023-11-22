@@ -7,7 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <filesystem>
 #include "core/application.h"
-#include "platform/OpenGL/OpenGLShader.h"
+
 
 #ifdef NG_PLATFORM_WINDOWS
 #include "platform/windows/winTimer.h"
@@ -18,10 +18,9 @@
 #include "platform/GLFW/GLFWSystem.h"
 #endif
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 #include "platform/OpenGL//vertexArray.h"
+#include "platform/OpenGL/OpenGLShader.h"
+#include "platform/OpenGL/OpenGLTexture.h"
 
 namespace Engine {
 	// Set static vars
@@ -283,66 +282,14 @@ namespace Engine {
 
 #pragma region TEXTURES
 
-		uint32_t letterTexture, numberTexture;
+		std::shared_ptr<OpenGLTexture> letterTexture;
+		letterTexture.reset(new OpenGLTexture("assets/textures/letterCube.png"));
+		std::shared_ptr<OpenGLTexture> numberTexture;
+		numberTexture.reset(new OpenGLTexture("assets/textures/numberCube.png"));
 
-		glGenTextures(1, &letterTexture);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, letterTexture);
+		letterTexture->bindToSlot(0);
+		numberTexture->bindToSlot(1);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		int width, height, channels;
-
-		/* Need to add
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-*/
-		std::string letterCube = "assets/textures/letterCube.png";
-		unsigned char* data = stbi_load(letterCube.c_str(), &width, &height, &channels, 0);
-		if (data)
-		{
-			if (channels == 3) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-			else if (channels == 4) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-			else return;
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		else
-		{
-			Log::error("Cannot load file {0}", letterCube);
-			return;
-		}
-		stbi_image_free(data);
-
-
-		glGenTextures(1, &numberTexture);
-		glActiveTexture(GL_TEXTURE0 + 1);
-		glBindTexture(GL_TEXTURE_2D, numberTexture);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		std::string numberCube = "assets/textures/numberCube.png";
-		data = stbi_load(numberCube.c_str(), &width, &height, &channels, 0);
-		if (data)
-		{
-			if (channels == 3) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-			else if (channels == 4) glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-			else return;
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		else
-		{
-			Log::error("Cannot load file {0}", numberCube);
-			return;
-		}
-		stbi_image_free(data);
 #pragma endregion
 		glm::mat4 view = glm::lookAt(
 			glm::vec3(0.f, 0.f, 0.f),
@@ -424,8 +371,12 @@ namespace Engine {
 			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_viewPos");
 			glUniform3f(uniformLocation, 0.f, 0.f, 0.f);
 
+			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_tint");
+			glUniform4f(uniformLocation, 1.0f, 1.0f, 1.0f, 1.0f);
+
 			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_texData");
 			glUniform1i(uniformLocation, 0);
+
 
 			glDrawElements(GL_TRIANGLES, cubeVAO->getDrawCount(), GL_UNSIGNED_INT, nullptr);
 
@@ -445,8 +396,6 @@ namespace Engine {
 		
 		}
 
-		glDeleteTextures(1, &letterTexture);
-		glDeleteTextures(1, &numberTexture);
 	}
 
 }
