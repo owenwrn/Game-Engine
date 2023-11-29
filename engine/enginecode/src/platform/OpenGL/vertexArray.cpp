@@ -55,6 +55,8 @@ namespace Engine
 			m_attributeIndex++;
 		
 		}
+
+		m_vertexBuffer.push_back(vertexBuffer);
 	}
 
 	void VertexArray::setIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer)

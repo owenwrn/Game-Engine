@@ -21,6 +21,7 @@
 #include "platform/OpenGL//vertexArray.h"
 #include "platform/OpenGL/OpenGLShader.h"
 #include "platform/OpenGL/OpenGLTexture.h"
+#include "rendering/Renderer3D.h"
 
 namespace Engine {
 	// Set static vars
@@ -291,6 +292,15 @@ namespace Engine {
 		numberTexture->bindToSlot(1);
 
 #pragma endregion
+
+#pragma region MATERIALS
+
+		Material cubeMat(TPShader, letterTexture);
+		Material cube2Mat(TPShader, numberTexture);
+
+
+#pragma endregion
+
 		glm::mat4 view = glm::lookAt(
 			glm::vec3(0.f, 0.f, 0.f),
 			glm::vec3(0.f, 0.f, -1.f),
@@ -305,10 +315,21 @@ namespace Engine {
 		models[1] = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, -6.f));
 		models[2] = glm::translate(glm::mat4(1.0f), glm::vec3(2.f, 0.f, -6.f));
 
+		SceneWideUniforms swu3D;
+		glm::vec3 lightData[3] = { { 1.f, 1.f, 1.f}, {1.f, 4.f, 6.f}, { 0.f, 0.f, 0.f} };
+		swu3D["u_view"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(view)));
+		swu3D["u_projection"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(projection)));
+		swu3D["u_lightColour"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[0])));
+		swu3D["u_lightPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[1])));
+		swu3D["u_viewPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[2])));
+
+
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
 
 		float timestep = 0.1f;
+
+		Renderer3D::init();
 
 		while (m_running)
 		{
@@ -331,6 +352,15 @@ namespace Engine {
 			models[2] = glm::rotate(models[2], timestep, glm::vec3(0.f, 1.0f, 0.f));
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			Renderer3D::begin(swu3D);
+
+			Renderer3D::submit(cubeVAO, cubeMat, models[1]);
+			Renderer3D::submit(cubeVAO, cube2Mat, models[2]);
+
+			Renderer3D::end();
+
+			/*
 
 			glUseProgram(FCShader->getID());
 			glBindVertexArray(pyramidVAO->getRenderID());
@@ -390,7 +420,7 @@ namespace Engine {
 
 			//if (InputPoller::isMouseButtonPressed(NG_MOUSE_BUTTON_1))
 				//Log::info("Left Mouse Button");
-
+				*/
 
 			m_window->onUpdate(timestep);
 		
