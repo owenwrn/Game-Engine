@@ -32,11 +32,11 @@ namespace Engine
 			setFlag(flag_texture);
 		}
 		//! Constructor with shader, tint but no texture
-		//Material(const std::shared_ptr<OpenGLShader>& shader, const glm::vec4& tint) :
-		//	m_shader(shader), m_texture(), m_tint(tint)
-		//{
-			//setFlag(flag_tint);
-		//}
+		Material(const std::shared_ptr<OpenGLShader>& shader, const glm::vec4& tint) :
+			m_shader(shader), m_texture(nullptr), m_tint(tint)
+		{
+			setFlag(flag_tint);
+		}
 
 		inline std::shared_ptr<OpenGLShader> getShader() const { return m_shader; } //!< Return the shader
 		inline std::shared_ptr<OpenGLTexture> getTexure() const { return m_texture; } //!< Return the texture

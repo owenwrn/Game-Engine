@@ -179,28 +179,28 @@ namespace Engine {
 				 0.5f, -0.5f, 0.5f,   1.f,  0.f,  0.f,  0.66f, 1.0f
 		};
 
-		float pyramidVertices[6 * 16] = {
-			//	 <------ Pos ------>  <--- colour ---> 
-				-0.5f, -0.5f, -0.5f,  0.8f, 0.2f, 0.8f, //  square Magneta
-				 0.5f, -0.5f, -0.5f,  0.8f, 0.2f, 0.8f,
-				 0.5f, -0.5f,  0.5f,  0.8f, 0.2f, 0.8f,
-				-0.5f, -0.5f,  0.5f,  0.8f, 0.2f, 0.8f,
+		float pyramidVertices[8 * 16] = {
+			//	 <------ Pos ------>  <--- normal --->	<---UV--->
+				-0.5f, -0.5f, -0.5f,  0.f, -1.f, 0.f,	0.f, 0.f,//  square Magneta
+				 0.5f, -0.5f, -0.5f,  0.f, -1.f, 0.f,	0.f, 0.5f,
+				 0.5f, -0.5f,  0.5f,  0.f, -1.f, 0.f,	0.33f, 0.5f,
+				-0.5f, -0.5f,  0.5f,  0.f, -1.f, 0.f,	0.33f, 0.f,
 
-				-0.5f, -0.5f, -0.5f,  0.2f, 0.8f, 0.2f,  //triangle Green
-				-0.5f, -0.5f,  0.5f,  0.2f, 0.8f, 0.2f,
-				 0.0f,  0.5f,  0.0f,  0.2f, 0.8f, 0.2f,
+				-0.5f, -0.5f, -0.5f,  -0.8944f, 0.4472f, 0.0f,	0.33f, 0.f,  //triangle Green
+				-0.5f, -0.5f,  0.5f,  -0.8944f, 0.4472f, 0.0f,	0.66f, 0.25f,
+				 0.0f,  0.5f,  0.0f,  -0.8944f, 0.4472f, 0.0f,	0.33f, 0.5f,
 
-				-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.f, //triangle Red
-				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.f,
-				 0.0f,  0.5f,  0.0f,  1.0f, 0.0f, 0.f,
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.4472f,0.8944f,	0.f, 0.f, //triangle Red
+				 0.5f, -0.5f,  0.5f,  0.0f, 0.4472f,0.8944f,	0.f, 0.f,
+				 0.0f,  0.5f,  0.0f,  0.0f, 0.4472f,0.8944f,	0.f, 0.f,
 
-				 0.5f, -0.5f,  0.5f,  0.8f, 0.8f, 0.2f, //  triangle Yellow
-				 0.5f, -0.5f, -0.5f,  0.8f, 0.8f, 0.2f,
-				 0.0f,  0.5f,  0.0f,  0.8f, 0.8f, 0.2f,
+				 0.5f, -0.5f,  0.5f,  0.8944f, 0.4472f, 0.0f,	0.f, 0.f, //  triangle Yellow
+				 0.5f, -0.5f, -0.5f,  0.8944f, 0.4472f, 0.0f,	0.f, 0.f,
+				 0.0f,  0.5f,  0.0f,  0.8944f, 0.4472f, 0.0f,	0.f, 0.f,
 
-				 0.5f, -0.5f, -0.5f,  0.f, 0.2f, 1.0f,//  triangle Blue
-				-0.5f, -0.5f, -0.5f,  0.f, 0.2f, 1.0f,
-				 0.0f,  0.5f,  0.0f,  0.f, 0.2f, 1.0f
+				 0.5f, -0.5f, -0.5f,  0.0f, 0.4472f, -0.8944f,	0.f, 0.f,//  triangle Blue
+				-0.5f, -0.5f, -0.5f,  0.0f, 0.4472f, -0.8944f,	0.f, 0.f,
+				 0.0f,  0.5f,  0.0f,  0.0f, 0.4472f, -0.8944f,	0.f, 0.f,
 		};
 
 		uint32_t pyramidIndices[3 * 6] =
@@ -256,7 +256,7 @@ namespace Engine {
 		std::shared_ptr<IndexBuffer> pyramidIBO;
 
 		pyramidVAO.reset(new VertexArray());
-		BufferLayout pyramidBL = { ShaderDataType::Float3, ShaderDataType::Float3 };
+		BufferLayout pyramidBL = { ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2 };
 		pyramidVBO.reset(new VertexBuffer(pyramidVertices, sizeof(pyramidVertices), pyramidBL));
 
 		pyramidIBO.reset(new IndexBuffer(pyramidIndices, 18));
@@ -295,6 +295,7 @@ namespace Engine {
 
 #pragma region MATERIALS
 
+		Material pyramidMat(TPShader, glm::vec4(0.f, 0.5f, 1.f, 1.f));
 		Material cubeMat(TPShader, letterTexture);
 		Material cube2Mat(TPShader, numberTexture);
 
@@ -355,6 +356,7 @@ namespace Engine {
 
 			Renderer3D::begin(swu3D);
 
+			Renderer3D::submit(pyramidVAO, pyramidMat, models[0]);
 			Renderer3D::submit(cubeVAO, cubeMat, models[1]);
 			Renderer3D::submit(cubeVAO, cube2Mat, models[2]);
 

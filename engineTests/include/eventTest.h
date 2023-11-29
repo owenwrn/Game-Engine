@@ -1,8 +1,8 @@
 #pragma once
 #include <gtest/gtest.h>
 
-#include "core/eventHandler.h"
-#include "core/keyEvent.h"
+#include "events/eventHandler.h"
+#include "events/keyEvent.h"
 
 namespace EventTests
 {
