@@ -17,6 +17,7 @@ namespace Engine
 		void setIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer);
 		inline uint32_t getRenderID() const { return m_OpenGL_ID; }
 		inline uint32_t getDrawCount() { if (m_indexBuffer) { return m_indexBuffer->getCount(); } else { return 0; } }
+		inline std::shared_ptr<IndexBuffer> getIndexBuffer() { return m_indexBuffer; }
 	private:
 		uint32_t m_OpenGL_ID; //!< Render ID
 		uint32_t m_attributeIndex = 0; //!< Attribute Index
