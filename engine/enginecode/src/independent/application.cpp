@@ -23,6 +23,7 @@
 #include "platform/OpenGL/OpenGLTexture.h"
 #include "rendering/Renderer3D.h"
 
+
 namespace Engine {
 	// Set static vars
 	Application* Application::s_instance = nullptr;
@@ -340,13 +341,13 @@ namespace Engine {
 
 			models[0] = glm::translate(glm::mat4(1.0f), pos) * glm::rotate(glm::mat4(1.0f), rot, glm::vec3(0.f, 1.0f, 0.f));
 
-			if (InputPoller::isKeyPressed(NG_KEY_A)) { pos.x -= timestep, 0.f, 0.f; }
-			if (InputPoller::isKeyPressed(NG_KEY_D)) { pos.x += timestep, 0.f, 0.f; }
-			if (InputPoller::isKeyPressed(NG_KEY_W)) { pos.y += timestep, 0.f, 0.f; }
-			if (InputPoller::isKeyPressed(NG_KEY_S)) { pos.y -= timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_J)) { pos.x -= timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_L)) { pos.x += timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_I)) { pos.y += timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_K)) { pos.y -= timestep, 0.f, 0.f; }
 			
-			if (InputPoller::isKeyPressed(NG_KEY_Q)) { rot += timestep; }
-			if (InputPoller::isKeyPressed(NG_KEY_E)) { rot -= timestep; }
+			if (InputPoller::isKeyPressed(NG_KEY_U)) { rot += timestep; }
+			if (InputPoller::isKeyPressed(NG_KEY_O)) { rot -= timestep; }
 
 			//for (auto& model : models) { model = glm::rotate(model, timestep, glm::vec3(0.f, 1.0, 0.f)); }
 			models[1] = glm::rotate(models[1], timestep, glm::vec3(0.f, 1.0f, 0.f));
