@@ -2,12 +2,7 @@
 #pragma once
 
 #include "engine_pch.h"
-#include "glm/glm.hpp"
-#include "platform/OpenGL/vertexArray.h"
-#include "platform/OpenGL/OpenGLShader.h"
-#include "platform/OpenGL/OpenGLTexture.h"
-#include "rendering/shaderDataType.h"
-#include <unordered_map>
+#include "rendering/RenderCommon.h"
 #include "material.h"
 
 namespace Engine
@@ -15,8 +10,6 @@ namespace Engine
 	/** \class Renderer3D
 	** \brief A class which renders 3D geometry instantly (non-batched)
 	*/ 
-	using SceneWideUniforms = std::unordered_map<const char*, std::pair<ShaderDataType, void*>>;
-
 
 	class Renderer3D
 	{
