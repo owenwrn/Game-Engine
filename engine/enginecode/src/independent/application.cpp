@@ -22,6 +22,7 @@
 #include "platform/OpenGL/OpenGLShader.h"
 #include "platform/OpenGL/OpenGLTexture.h"
 #include "rendering/Renderer3D.h"
+#include "rendering/Renderer2D.h"
 
 
 namespace Engine {
@@ -289,8 +290,13 @@ namespace Engine {
 		std::shared_ptr<OpenGLTexture> numberTexture;
 		numberTexture.reset(new OpenGLTexture("assets/textures/numberCube.png"));
 
+		std::shared_ptr<OpenGLTexture> moonTexture;
+		moonTexture.reset(new OpenGLTexture("assets/textures/moon.png"));
+
+
 		letterTexture->bindToSlot(0);
 		numberTexture->bindToSlot(1);
+		moonTexture->bindToSlot(2);
 
 #pragma endregion
 
@@ -317,6 +323,9 @@ namespace Engine {
 		models[1] = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, -6.f));
 		models[2] = glm::translate(glm::mat4(1.0f), glm::vec3(2.f, 0.f, -6.f));
 
+		glm::mat4 view2D = glm::mat4(1.f);
+		glm::mat4 projection2D = glm::ortho(0.f, static_cast<float>(m_window->getWidth()), static_cast<float>(m_window->getHeight()), 0.f);
+
 		SceneWideUniforms swu3D;
 		glm::vec3 lightData[3] = { { 1.f, 1.f, 1.f}, {1.f, 4.f, 6.f}, { 0.f, 0.f, 0.f} };
 		swu3D["u_view"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(view)));
@@ -325,6 +334,19 @@ namespace Engine {
 		swu3D["u_lightPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[1])));
 		swu3D["u_viewPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[2])));
 
+		SceneWideUniforms swu2D;
+		swu2D["u_view"] = std::pair<ShaderDataType, void*>(ShaderDataType::Mat4, static_cast<void*>(glm::value_ptr(view2D)));
+		swu2D["u_projection"] = std::pair<ShaderDataType, void*>(ShaderDataType::Mat4, static_cast<void*>(glm::value_ptr(projection2D)));
+
+		Quad quads[6] =
+		{
+			Quad::createCentreHalf({300.f, 200.f}, {100.f, 50.f}),
+			Quad::createCentreHalf({200.f, 200.f}, {50.f, 50.f}),
+			Quad::createCentreHalf({400.f, 500.f}, {75.f, 75.f}),
+			Quad::createCentreHalf({100.f, 200.f}, {75.f, 50.f}),
+			Quad::createCentreHalf({100.f, 500.f}, {50.f, 25.f}),
+			Quad::createCentreHalf({300.f, 50.f}, {75.f, 100.f}),
+		};
 
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
@@ -332,6 +354,7 @@ namespace Engine {
 		float timestep = 0.1f;
 
 		Renderer3D::init();
+		Renderer2D::init();
 
 		while (m_running)
 		{
@@ -355,6 +378,8 @@ namespace Engine {
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+			glEnable(GL_DEPTH_TEST);
+
 			Renderer3D::begin(swu3D);
 
 			Renderer3D::submit(pyramidVAO, pyramidMat, models[0]);
@@ -363,67 +388,26 @@ namespace Engine {
 
 			Renderer3D::end();
 
-			/*
+			glDisable(GL_DEPTH_TEST);
 
-			glUseProgram(FCShader->getID());
-			glBindVertexArray(pyramidVAO->getRenderID());
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pyramidIBO->getRenderID());
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-			GLuint uniformLocation;
+			Renderer2D::begin(swu2D);
 
-			uniformLocation = glGetUniformLocation(FCShader->getID(), "u_model");
-			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(models[0])); // Must include <glm/gtc/type_ptr.hpp>
+			Renderer2D::submit(quads[0], {0.f, 0.5f, 1.f, 1.f});
+			Renderer2D::submit(quads[1], letterTexture);
+			Renderer2D::submit(quads[2], numberTexture ,{0.8f, 0.5f, .2f, 1.f});
+			Renderer2D::submit(quads[3], numberTexture ,{1.f, 0.5f, 1.f, 1.f}, 45.f, true);
+			Renderer2D::submit(quads[3], numberTexture ,{1.f, 0.5f, 1.f, 1.f}, glm::radians(-45.f));
+			Renderer2D::submit(quads[4], moonTexture, 45.f, true);
+			Renderer2D::submit(quads[5], { 1.f, 0.5f, 0.f, 0.5f }, glm::radians(-45.f));
+			Renderer2D::submit(quads[5], { 0.f, 0.5f, 1.f, 0.5f }, 45.f, true);
 
-			uniformLocation = glGetUniformLocation(FCShader->getID(), "u_view");
-			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(view));
+			Renderer2D::end();
 
-			uniformLocation = glGetUniformLocation(FCShader->getID(), "u_projection");
-			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(projection));
+			glDisable(GL_BLEND);
 
-			glDrawElements(GL_TRIANGLES, pyramidVAO->getDrawCount(), GL_UNSIGNED_INT, nullptr);
-
-			glUseProgram(TPShader->getID());
-			glBindVertexArray(cubeVAO->getRenderID());
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIBO->getRenderID());
-
-			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_model");
-			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(models[1]));
-
-			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_view");
-			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(view));
-
-			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_projection");
-			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(projection));
-
-			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_lightColour");
-			glUniform3f(uniformLocation, 1.f, 1.f, 1.f);
-
-			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_lightPos");
-			glUniform3f(uniformLocation, 1.f, 4.f, 6.f);
-
-			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_viewPos");
-			glUniform3f(uniformLocation, 0.f, 0.f, 0.f);
-
-			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_tint");
-			glUniform4f(uniformLocation, 1.0f, 1.0f, 1.0f, 1.0f);
-
-			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_texData");
-			glUniform1i(uniformLocation, 0);
-
-
-			glDrawElements(GL_TRIANGLES, cubeVAO->getDrawCount(), GL_UNSIGNED_INT, nullptr);
-
-			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_model");
-			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(models[2]));
-
-			uniformLocation = glGetUniformLocation(TPShader->getID(), "u_texData");
-			glUniform1i(uniformLocation, 1);
-
-			glDrawElements(GL_TRIANGLES, cubeVAO->getDrawCount(), GL_UNSIGNED_INT, nullptr);
-
-			//if (InputPoller::isMouseButtonPressed(NG_MOUSE_BUTTON_1))
-				//Log::info("Left Mouse Button");
-				*/
 
 			m_window->onUpdate(timestep);
 		
