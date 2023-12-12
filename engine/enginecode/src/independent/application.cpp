@@ -390,8 +390,8 @@ namespace Engine {
 
 		SceneWideUniforms swu3D;
 		glm::vec3 lightData[3] = { { 1.f, 1.f, 1.f}, {1.f, 4.f, 6.f}, { 0.f, 0.f, 0.f} };
-		swu3D["u_view"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(view)));
-		swu3D["u_projection"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(projection)));
+		/*swu3D["u_view"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(view)));
+		swu3D["u_projection"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(projection)));*/
 		swu3D["u_lightColour"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[0])));
 		swu3D["u_lightPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[1])));
 		swu3D["u_viewPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[2])));
@@ -411,7 +411,7 @@ namespace Engine {
 		};
 
 		glEnable(GL_DEPTH_TEST);
-		glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+		glClearColor(0.26f, 0.98f, 0.80f, 1.0f);
 
 		float timestep = 0.1f;
 

@@ -18,6 +18,6 @@ namespace Engine
 	class RenderCommon
 	{
 	public:
-		static TextureUnitManager texUnitManger;
+		static TextureUnitManager texUnitManager;
 	};
 }

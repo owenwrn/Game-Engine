@@ -48,6 +48,7 @@ namespace Engine
 		static void submit(const Quad& quad, const SubTexture& texture, float angle, bool degrees = false); //!< Render a roatated and textured quad
 		static void submit(const Quad& quad, const SubTexture& texture, const glm::vec4& tint, float angle, bool degrees = false); //!< Render a roatated, textured and tint quad
 		static void end(); //!< End the current 2D scene
+		static void flush();
 
 	private:
 
@@ -61,7 +62,9 @@ namespace Engine
 			std::shared_ptr<OpenGLUniformBuffer> UBO;
 			glm::mat4 model;
 			std::array<glm::vec4, 4> quad;
-			std::array<Renderer2DVertex, 4> vertices;
+			static const uint32_t batchSize = 4;
+			uint32_t drawCount;
+			std::vector<Renderer2DVertex> vertices;
 			std::array<int32_t, 32> textureUnits;
 		};
 

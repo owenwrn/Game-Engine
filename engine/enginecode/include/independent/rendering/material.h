@@ -39,7 +39,7 @@ namespace Engine
 		}
 
 		inline std::shared_ptr<OpenGLShader> getShader() const { return m_shader; } //!< Return the shader
-		inline std::shared_ptr<OpenGLTexture> getTexure() const { return m_texture; } //!< Return the texture
+		inline std::shared_ptr<OpenGLTexture> getTexture() const { return m_texture; } //!< Return the texture
 		inline glm::vec4 getTint() const { return m_tint; } //!< Return the tint
 		bool isFlagSet(uint32_t flag) const { return m_flags & flag; } //!< Check if a flag is checked
 

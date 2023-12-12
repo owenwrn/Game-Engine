@@ -57,9 +57,17 @@ namespace Engine
 		//apply material uniforms
 		material.getShader()->uploadMat4("u_model", modelMat);
 
-		if (material.isFlagSet(Material::flag_texture)) material.getTexure()->bindToSlot(0);
-		else s_data->defaultTexture->bindToSlot(0);
-		material.getShader()->uploadInt("u_texData", 0);
+		std::shared_ptr<OpenGLTexture> texture;
+		if (material.isFlagSet(Material::flag_texture)) texture = material.getTexture();
+		else texture = s_data->defaultTexture;
+
+		uint32_t texUnit;
+		if (RenderCommon::texUnitManager.getUnit(texture->getID(), texUnit))
+		{
+			glActiveTexture(GL_TEXTURE0 + texUnit);
+			glBindTexture(GL_TEXTURE_2D, texture->getID());
+		}
+		material.getShader()->uploadInt("u_texData", texUnit);
 
 		if (material.isFlagSet(Material::flag_tint)) material.getShader()->uploadFloat4("u_tint", material.getTint());
 		else  material.getShader()->uploadFloat4("u_tint", s_data->defaultTint);
