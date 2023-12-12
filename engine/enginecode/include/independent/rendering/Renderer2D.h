@@ -1,9 +1,24 @@
 /** \file Renderer2D.h */
 #pragma once
 #include "rendering/RenderCommon.h"
+#include "platform/OpenGL/OpenGLUniformBuffer.h"
+#include <array>
 
 namespace Engine
 {
+	class Renderer2DVertex
+	{
+	public:
+		Renderer2DVertex() = default;
+		Renderer2DVertex(const glm::vec4& pos, const glm::vec2& UVs, uint32_t tu, const glm::vec4& pTint) :
+			position(pos), uvCoords(UVs), texUnit(tu), tint(pack(pTint)) {}
+		glm::vec4 position;
+		glm::vec2 uvCoords;
+		uint32_t texUnit;
+		uint32_t tint;
+		static VertexBufferLayout layout;
+		static uint32_t pack(const glm::vec4& tint);
+	};
 
 	class Quad
 	{
@@ -27,11 +42,11 @@ namespace Engine
 		static void init(); //!< Init the internal data of the renderer
 		static void begin(const SceneWideUniforms& swu); //!< Begin a new 2D scene
 		static void submit(const Quad& quad, const glm::vec4& tint); //!< Render a tinted quad
-		static void submit(const Quad& quad, const std::shared_ptr<OpenGLTexture>& texture); //!< Render a textured quad
-		static void submit(const Quad& quad, const std::shared_ptr<OpenGLTexture>& texture, const glm::vec4& tint); //!< Render a textured and tint quad
+		static void submit(const Quad& quad, const SubTexture& texture); //!< Render a textured quad
+		static void submit(const Quad& quad, const SubTexture& texture, const glm::vec4& tint); //!< Render a textured and tint quad
 		static void submit(const Quad& quad, const glm::vec4& tint, float angle, bool degrees = false); //!< Render a roatated and tint quad
-		static void submit(const Quad& quad, const std::shared_ptr<OpenGLTexture>& texture, float angle, bool degrees = false); //!< Render a roatated and textured quad
-		static void submit(const Quad& quad, const std::shared_ptr<OpenGLTexture>& texture, const glm::vec4& tint, float angle, bool degrees = false); //!< Render a roatated, textured and tint quad
+		static void submit(const Quad& quad, const SubTexture& texture, float angle, bool degrees = false); //!< Render a roatated and textured quad
+		static void submit(const Quad& quad, const SubTexture& texture, const glm::vec4& tint, float angle, bool degrees = false); //!< Render a roatated, textured and tint quad
 		static void end(); //!< End the current 2D scene
 
 	private:
@@ -39,10 +54,15 @@ namespace Engine
 		struct InternalData
 		{
 			std::shared_ptr<OpenGLTexture> defaultTexture; //!< Empty white texture
+			SubTexture defaultSubTexture; //!< Default SubTexture
 			glm::vec4 defaultTint; //!< Default white tint
 			std::shared_ptr<OpenGLShader> shader;
 			std::shared_ptr<VertexArray> VAO;
+			std::shared_ptr<OpenGLUniformBuffer> UBO;
 			glm::mat4 model;
+			std::array<glm::vec4, 4> quad;
+			std::array<Renderer2DVertex, 4> vertices;
+			std::array<int32_t, 32> textureUnits;
 		};
 
 		static std::shared_ptr<InternalData> s_data; //!< Data internal to the render

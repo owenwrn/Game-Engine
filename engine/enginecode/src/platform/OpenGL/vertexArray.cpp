@@ -11,6 +11,7 @@ namespace Engine
 		{
 			switch (type)
 			{
+			case ShaderDataType::FlatInt: return GL_INT;
 			case ShaderDataType::Byte4: return GL_UNSIGNED_BYTE;
 			case ShaderDataType::Short: return GL_SHORT;
 			case ShaderDataType::Short2: return GL_SHORT;
@@ -51,15 +52,25 @@ namespace Engine
 			uint32_t normalised = GL_FALSE;
 			if (element.m_normalised) { normalised = GL_TRUE; }
 			glEnableVertexAttribArray(m_attributeIndex);
-			glVertexAttribPointer(
-				m_attributeIndex,
-				SDT::componentCount(element.m_dataType),
-				SDT::toGLType(element.m_dataType),
-				normalised,
-				layout.getStride(),
-				(void*) element.m_offset);
+			if (element.m_dataType == ShaderDataType::FlatInt)
+			{
+				glVertexAttribIPointer(m_attributeIndex,
+					SDT::componentCount(element.m_dataType),
+					SDT::toGLType(element.m_dataType),
+					layout.getStride(),
+					(const void*)element.m_offset);
+			}
+			else
+			{
+				glVertexAttribPointer(
+					m_attributeIndex,
+					SDT::componentCount(element.m_dataType),
+					SDT::toGLType(element.m_dataType),
+					normalised,
+					layout.getStride(),
+					(void*)element.m_offset);
+			}
 			m_attributeIndex++;
-		
 		}
 
 		m_vertexBuffer.push_back(vertexBuffer);

@@ -282,6 +282,12 @@ namespace Engine {
 		std::shared_ptr<OpenGLShader> TPShader;
 		TPShader.reset(new OpenGLShader("./assets/shaders/texturedPhong.glsl"));
 
+		//std::shared_ptr<OpenGLShader> FCShader;
+		//FCShader.reset(new OpenGLShader("./assets/shaders/flatColour.vert", "./assets/shaders/flatColour.frag"));
+
+		//std::shared_ptr<OpenGLShader> TPShader;
+		//TPShader.reset(new OpenGLShader("./assets/shaders/texturedPhong.vert", "./assets/shaders/texturedPhong.frag"));
+
 #pragma endregion 
 
 #pragma region TEXTURES
@@ -294,10 +300,12 @@ namespace Engine {
 		std::shared_ptr<OpenGLTexture> moonTexture;
 		moonTexture.reset(new OpenGLTexture("assets/textures/moon.png"));
 
+		SubTexture letterSubTexture(letterTexture, { 0.f, 0.f }, { 1.0f, 0.5f });
+		SubTexture numberSubTexture(numberTexture, { 0.f, 0.5f }, { 1.0f, 0.5f });
 
-		letterTexture->bindToSlot(0);
+		/*letterTexture->bindToSlot(0);
 		numberTexture->bindToSlot(1);
-		moonTexture->bindToSlot(2);
+		moonTexture->bindToSlot(2);*/
 
 #pragma endregion
 
@@ -382,8 +390,8 @@ namespace Engine {
 
 		SceneWideUniforms swu3D;
 		glm::vec3 lightData[3] = { { 1.f, 1.f, 1.f}, {1.f, 4.f, 6.f}, { 0.f, 0.f, 0.f} };
-		//swu3D["u_view"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(view)));
-		//swu3D["u_projection"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(projection)));
+		swu3D["u_view"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(view)));
+		swu3D["u_projection"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(projection)));
 		swu3D["u_lightColour"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[0])));
 		swu3D["u_lightPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[1])));
 		swu3D["u_viewPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[2])));
@@ -450,11 +458,11 @@ namespace Engine {
 			Renderer2D::begin(swu2D);
 
 			Renderer2D::submit(quads[0], {0.f, 0.5f, 1.f, 1.f});
-			Renderer2D::submit(quads[1], letterTexture);
-			Renderer2D::submit(quads[2], numberTexture ,{0.8f, 0.5f, .2f, 1.f});
-			Renderer2D::submit(quads[3], numberTexture ,{1.f, 0.5f, 1.f, 1.f}, 45.f, true);
-			Renderer2D::submit(quads[3], numberTexture ,{1.f, 0.5f, 1.f, 1.f}, glm::radians(-45.f));
-			Renderer2D::submit(quads[4], moonTexture, 45.f, true);
+			Renderer2D::submit(quads[1], letterSubTexture);
+			Renderer2D::submit(quads[2], numberSubTexture ,{0.8f, 0.5f, .2f, 1.f});
+			Renderer2D::submit(quads[3], numberSubTexture ,{1.f, 0.5f, 1.f, 1.f}, 45.f, true);
+			Renderer2D::submit(quads[3], numberSubTexture ,{1.f, 0.5f, 1.f, 1.f}, glm::radians(-45.f));
+			Renderer2D::submit(quads[4], numberSubTexture, 45.f, true);
 			Renderer2D::submit(quads[5], { 1.f, 0.5f, 0.f, 0.5f }, glm::radians(-45.f));
 			Renderer2D::submit(quads[5], { 0.f, 0.5f, 1.f, 0.5f }, 45.f, true);
 
