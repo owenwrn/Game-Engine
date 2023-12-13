@@ -2,6 +2,8 @@
 #pragma once
 #include "engine_pch.h"
 #include <glm/glm.hpp>
+#include "platform/GLFW/inputPoller.h"
+#include "events/events.h"
 
 namespace Engine
 {

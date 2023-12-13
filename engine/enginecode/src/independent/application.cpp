@@ -301,6 +301,7 @@ namespace Engine {
 		moonTexture.reset(new OpenGLTexture("assets/textures/moon.png"));
 
 		SubTexture letterSubTexture(letterTexture, { 0.f, 0.f }, { 1.0f, 0.5f });
+
 		SubTexture numberSubTexture(numberTexture, { 0.f, 0.5f }, { 1.0f, 0.5f });
 
 		/*letterTexture->bindToSlot(0);
