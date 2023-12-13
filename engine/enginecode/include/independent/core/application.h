@@ -29,7 +29,7 @@ namespace Engine {
 		std::shared_ptr<WindowBase> m_window; //!< Window
 
 		std::shared_ptr<Timer> m_timer; //!< Timer
-		std::shared_ptr<Camera> m_camera;//!<Camera
+		std::shared_ptr<CameraController> m_camera;//!<Camera
 
 		void onClose(WindowCloseEvent & e); //!< Run when the window is closed
 		bool onResize(WindowResizeEvent& e); //!< Run when the window is resized

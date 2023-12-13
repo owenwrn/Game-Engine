@@ -62,7 +62,7 @@ namespace Engine
 			std::shared_ptr<OpenGLUniformBuffer> UBO;
 			glm::mat4 model;
 			std::array<glm::vec4, 4> quad;
-			static const uint32_t batchSize = 4;
+			static const uint32_t batchSize = 1024;
 			uint32_t drawCount;
 			std::vector<Renderer2DVertex> vertices;
 			std::array<int32_t, 32> textureUnits;

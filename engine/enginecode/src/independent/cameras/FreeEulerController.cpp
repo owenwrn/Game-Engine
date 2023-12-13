@@ -12,72 +12,62 @@
 
 namespace Engine
 {
-	FreeEulerController::FreeEulerController(const FreeEulerParams& param)
+	FreeEulerController::FreeEulerController(const FreeEulerParams& params)
 	{
-
+		m_position = params.position;
+		m_rotation = params.rotation;
 
 		m_lastMousePos = InputPoller::getMousePosition();
-		m_camera.projection = glm::perspective(param.fovY, param.aspectRatio, param.nearClip, param.farClip);
+		m_camera.view = glm::lookAt(
+			glm::vec3(0.f, 0.f, 0.f),
+			glm::vec3(0.f, 0.f, -1.f),
+			glm::vec3(0.f, 1.f, 0.f)
+		);
+		m_camera.projection = glm::perspective(params.fovY, params.aspectRatio, params.nearClip, params.farClip);
 	}
 
 	void FreeEulerController::onUpdate(float timestep)
 	{
-		bool camMoved = false;
+		float speed = 2.5f;
+		float sensitivity = 45.f;
+
+		glm::vec3 right = { m_transform[0][0], m_transform[0][1], m_transform[0][2] };
+		glm::vec3 foward = { -m_transform[2][0], -m_transform[2][1], -m_transform[2][2] };
+	
 		if (InputPoller::isKeyPressed(NG_KEY_W))
 		{
-			float y = m_params.position.y;
-			m_params.position += m_foward * m_params.translationSpeed * timestep;
-			m_params.position.y = y;
-			camMoved = true;
+			m_position += (foward * speed * timestep);
 		}
-		if (InputPoller::isKeyPressed(NG_KEY_S))
-		{
-			float y = m_params.position.y;
-			m_params.position -= m_foward * m_params.translationSpeed * timestep;
-			m_params.position.y = y;
-			camMoved = true;
-		}
-		if (InputPoller::isKeyPressed(NG_KEY_A))
-		{
-			m_params.position -= m_right * m_params.translationSpeed * timestep;
-			camMoved = true;
-		}
-		if (InputPoller::isKeyPressed(NG_KEY_D))
-		{
-			m_params.position += m_right * m_params.translationSpeed * timestep;
-			camMoved = true;
-		}
+		if (InputPoller::isKeyPressed(NG_KEY_S)) m_position -= (foward * speed * timestep);
+		
+		if (InputPoller::isKeyPressed(NG_KEY_A)) m_position -= (right * speed * timestep);
+		if (InputPoller::isKeyPressed(NG_KEY_D))m_position += (right * speed * timestep);
 
-		if (InputPoller::isMouseButtonPressed(NG_MOUSE_BUTTON_RIGHT))
-		{
-			if (m_lastMousePos.x >= 0.f)
-			{
-				camMoved = true;
-				glm::vec2 currentMousePos = InputPoller::getMousePosition();
-				glm::vec2 mouseDelta = currentMousePos - m_lastMousePos;
+		if (InputPoller::isKeyPressed(NG_KEY_UP)) m_rotation.x +=  speed * timestep;
+		if (InputPoller::isKeyPressed(NG_KEY_DOWN)) m_rotation.x -= speed * timestep;
+		
+		if (InputPoller::isKeyPressed(NG_KEY_LEFT)) m_rotation.y += speed * timestep;
+		if (InputPoller::isKeyPressed(NG_KEY_RIGHT)) m_rotation.y -= speed * timestep;
 
-				m_params.yaw -= mouseDelta.x * m_params.rotationSpeed * timestep;
-				m_params.pitch -= mouseDelta.y * m_params.rotationSpeed * timestep;
+		if (InputPoller::isKeyPressed(NG_KEY_E)) m_rotation.z += speed * timestep;
+		if (InputPoller::isKeyPressed(NG_KEY_Q)) m_rotation.z -= speed * timestep;
+		
+		glm::vec2 currentMousePos = InputPoller::getMousePosition();
+		glm::vec2 deltaMousePos = currentMousePos - m_lastMousePos;
+		deltaMousePos /= glm::vec2(800.f, 600.f);
+		m_rotation.y -= sensitivity * deltaMousePos.x * timestep;
+		m_rotation.x -= sensitivity * deltaMousePos.y * timestep;
 
-				//m_params.pitch = std::clamp(m_params.pitch, -89.f, 89.f);
-			}
-			else
-			{
-				m_lastMousePos.x = -1.f;
-			}
-		}
+		m_lastMousePos = currentMousePos;
 
-		if (camMoved)
-		{
-			glm::mat4 rotX = glm::rotate(glm::mat4(1.f), m_params.pitch, glm::vec3(1.f, 0.f, 0.f));
-			glm::mat4 rotY = glm::rotate(glm::mat4(1.f), m_params.yaw, glm::vec3(0.f, 1.f, 0.f));
-			m_model = glm::translate(glm::mat4(1.f), m_params.position) * (rotX * rotY);
+		glm::mat4 rotX = glm::rotate(glm::mat4(1.f), m_rotation.x, glm::vec3(1.f, 0.f, 0.f));
+		glm::mat4 rotY = glm::rotate(glm::mat4(1.f), m_rotation.x, glm::vec3(0.f, 1.f, 0.f));
+		glm::mat4 rotZ = glm::rotate(glm::mat4(1.f), m_rotation.x, glm::vec3(0.f, 0.f, 1.f));
 
-			m_camera.updateView(m_model);
+		m_orientation = rotX * rotY * rotZ;
 
-			m_foward = { -m_model[2][0], -m_model[2][1], -m_model[2][2] };
-			m_up = { m_model[1][0], m_model[1][1], m_model[1][2] };
-			m_right = { m_model[0][0], m_model[0][1], m_model[0][2] };
-		}
+		m_transform = glm::translate(glm::mat4(1.f), m_position) * m_orientation;
+
+		m_camera.updateView(m_transform);
 	}
 }

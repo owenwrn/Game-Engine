@@ -301,8 +301,8 @@ namespace Engine {
 		moonTexture.reset(new OpenGLTexture("assets/textures/moon.png"));
 
 		SubTexture letterSubTexture(letterTexture, { 0.f, 0.f }, { 1.0f, 0.5f });
-
-		SubTexture numberSubTexture(numberTexture, { 0.f, 0.5f }, { 1.0f, 0.5f });
+		SubTexture numberSubTexture(numberTexture, { 0.f, 0.5f }, { 1.0f, 1.0f });
+		//SubTexture moonSubTexture(moonTexture, { 0.5f, 0.0f }, { 1.0f, 1.0f });
 
 		/*letterTexture->bindToSlot(0);
 		numberTexture->bindToSlot(1);
@@ -325,6 +325,10 @@ namespace Engine {
 			glm::vec3(0.f, 1.f, 0.f)
 		);
 		glm::mat4 projection = glm::perspective(glm::radians(45.f), 1024.f / 800.f, 0.1f, 100.f);
+
+		FreeEulerParams eulerParams;
+		m_camera.reset(new FreeEulerController(eulerParams));
+
 
 		//// Camera UBO
 		uint32_t blockNumber = 0;
@@ -355,16 +359,20 @@ namespace Engine {
 		cameraUBO->attachShaderBlock(FCShader, "b_camera");
 		cameraUBO->attachShaderBlock(TPShader, "b_camera");
 
-		cameraUBO->uploadData("u_projection", glm::value_ptr(projection));
-		cameraUBO->uploadData("u_view", glm::value_ptr(view));
+		cameraUBO->uploadData("u_projection", glm::value_ptr(m_camera->getCamera().projection));
+		cameraUBO->uploadData("u_view", glm::value_ptr(m_camera->getCamera().view));
 
 		blockNumber++;
 		glm::vec3 lightColour(1.f, 1.f, 1.f);
 		glm::vec3 lightPos(1.f, 4.f, 6.f);
 		glm::vec3 viewPos(0.f, 0.f, 0.f);
 
-		uint32_t lightsUBO;
+
+
+
+		/*
 		uint32_t lightDataSize = sizeof(glm::vec4) * 3;
+		
 
 		glGenBuffers(1, &lightsUBO);
 		glBindBuffer(GL_UNIFORM_BUFFER, lightsUBO);
@@ -376,8 +384,19 @@ namespace Engine {
 
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::vec3), glm::value_ptr(lightPos));
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec4), sizeof(glm::vec3), glm::value_ptr(viewPos));
-		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec4) * 2, sizeof(glm::vec3), glm::value_ptr(lightColour));
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec4) * 2, sizeof(glm::vec3), glm::value_ptr(lightColour));*/
 
+		UniformBufferLayout lightsLayout = { {"u_lightColour", ShaderDataType::Float4}, {"u_lightColour", ShaderDataType::Float4}, {"u_lightColour", ShaderDataType::Float4} };
+
+		std::shared_ptr<OpenGLUniformBuffer> lightsUBO;
+		lightsUBO.reset(new OpenGLUniformBuffer(lightsLayout));
+
+		lightsUBO->attachShaderBlock(TPShader, "b_lights");
+
+		
+		lightsUBO->uploadData("u_lightPos", glm::value_ptr(lightPos));
+		lightsUBO->uploadData("u_viewPos", glm::value_ptr(viewPos));
+		lightsUBO->uploadData("u_lightColour", glm::value_ptr(lightColour));
 
 		glm::vec3 pos(-2.0f, 0.f, -6.f);
 		float rot = 0.f;
@@ -393,9 +412,9 @@ namespace Engine {
 		glm::vec3 lightData[3] = { { 1.f, 1.f, 1.f}, {1.f, 4.f, 6.f}, { 0.f, 0.f, 0.f} };
 		/*swu3D["u_view"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(view)));
 		swu3D["u_projection"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(projection)));*/
-		swu3D["u_lightColour"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[0])));
+		/*swu3D["u_lightColour"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[0])));
 		swu3D["u_lightPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[1])));
-		swu3D["u_viewPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[2])));
+		swu3D["u_viewPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[2])));*/
 
 		SceneWideUniforms swu2D;
 		swu2D["u_view"] = std::pair<ShaderDataType, void*>(ShaderDataType::Mat4, static_cast<void*>(glm::value_ptr(view2D)));
@@ -471,7 +490,7 @@ namespace Engine {
 
 			glDisable(GL_BLEND);
 
-
+			m_camera->onUpdate(timestep);
 			m_window->onUpdate(timestep);
 		
 		}

@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include "rendering/Renderer2D.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <numeric>
 
 
 namespace Engine
@@ -38,14 +39,14 @@ namespace Engine
 		s_data->quad[2] = { 0.5f,  0.5f, 1.f, 1.f };
 		s_data->quad[3] = { 0.5f, -0.5f, 1.f, 1.f };
 
-		s_data->vertices.resize(s_data->batchSize);
-		s_data->vertices[0] = Renderer2DVertex(s_data->quad[0], { 0.f, 0.f }, 0, glm::vec4(1.f));
+		s_data->vertices.resize(s_data->batchSize * 4);
+		/*s_data->vertices[0] = Renderer2DVertex(s_data->quad[0], {0.f, 0.f}, 0, glm::vec4(1.f));
 		s_data->vertices[1] = Renderer2DVertex(s_data->quad[1], { 0.f, 1.f }, 0, glm::vec4(1.f));
 		s_data->vertices[2] = Renderer2DVertex(s_data->quad[2], { 1.f, 1.f }, 0, glm::vec4(1.f));
-		s_data->vertices[3] = Renderer2DVertex(s_data->quad[3], { 1.f, 0.f }, 0, glm::vec4(1.f));
+		s_data->vertices[3] = Renderer2DVertex(s_data->quad[3], { 1.f, 0.f }, 0, glm::vec4(1.f));*/
 
-		std::vector<uint32_t> indices(s_data->batchSize);
-		indices = { 0,1,2,3,4,5,6,7 };
+		std::vector<uint32_t> indices(s_data->batchSize * 4);
+		std::iota(indices.begin(), indices.end(), 0);
 
 		std::shared_ptr<VertexBuffer> VBO;
 		std::shared_ptr<IndexBuffer> IBO;
@@ -87,7 +88,7 @@ namespace Engine
 
 	void Renderer2D::submit(const Quad& quad, const SubTexture& texture, const glm::vec4& tint)
 	{
-		if (s_data->drawCount + 4 > s_data->batchSize) flush();
+		if (s_data->drawCount + 4 > s_data->batchSize * 4) flush();
 
 		uint32_t texUnit;
 		if (RenderCommon::texUnitManager.full()) flush();
@@ -134,7 +135,7 @@ namespace Engine
 
 	void Renderer2D::submit(const Quad& quad, const SubTexture& texture, const glm::vec4& tint, float angle, bool degrees)
 	{
-		if (s_data->drawCount + 4 > s_data->batchSize) flush();
+		if (s_data->drawCount + 4 > s_data->batchSize * 4) flush();
 
 		if (degrees) angle = glm::radians(angle);
 
@@ -175,7 +176,7 @@ namespace Engine
 		glBindVertexArray(s_data->VAO->getRenderID());
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, s_data->VAO->getIndexBuffer()->getRenderID());
 
-		glDrawElements(GL_QUADS, s_data->VAO->getDrawCount(), GL_UNSIGNED_INT, nullptr); 
+		glDrawElements(GL_QUADS, s_data->drawCount, GL_UNSIGNED_INT, nullptr);
 
 		s_data->drawCount = 0;
 	}

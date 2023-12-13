@@ -1,4 +1,4 @@
-/** \file GLFW_OpenGL_GC.H */
+/** \file GLFW_OpenGL_GC.h */
 #pragma once
 
 #include "core/graphicsContext.h"
