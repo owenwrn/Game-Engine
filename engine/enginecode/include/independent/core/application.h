@@ -8,6 +8,7 @@
 #include "events/events.h"
 #include "window.h"
 #include "platform/GLFW/inputPoller.h"
+#include "cameras/FreeEulerController.h"
 
 
 namespace Engine {
@@ -27,7 +28,8 @@ namespace Engine {
 		std::shared_ptr<System> m_windowsSystem; //!< Windows System
 		std::shared_ptr<WindowBase> m_window; //!< Window
 
-	std::shared_ptr<Timer> m_timer; //!< Timer
+		std::shared_ptr<Timer> m_timer; //!< Timer
+		std::shared_ptr<Camera> m_camera;//!<Camera
 
 		void onClose(WindowCloseEvent & e); //!< Run when the window is closed
 		bool onResize(WindowResizeEvent& e); //!< Run when the window is resized
