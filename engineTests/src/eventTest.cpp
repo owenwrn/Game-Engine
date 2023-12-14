@@ -1,6 +1,6 @@
 #include "eventTest.h"
 
-TEST(EventTest, HandledCorrectly) {
+TEST(EventTest, WindowEventHandledCorrectly) {
 
 	if (!EventTests::handler) EventTests::init();
 
@@ -65,6 +65,106 @@ TEST(EventTest, HandledCorrectly) {
 	EXPECT_FALSE(before);
 	EXPECT_TRUE(after);
 }
+
+TEST(EventTest, KeyEventHandledCorrectly) {
+
+	if (!EventTests::handler) EventTests::init();
+
+	Engine::KeyPressedEvent kpe(1,1);
+	Engine::KeyReleasedEvent kre(1);
+	Engine::KeyTypeEvent kte(1);
+
+
+	bool before = kpe.handled();
+
+	auto& callback1 = EventTests::handler->getOnKeyPressed();
+
+	callback1(kpe);
+
+	bool after = kpe.handled();
+
+	EXPECT_FALSE(before);
+	EXPECT_TRUE(after);
+
+	before = kre.handled();
+
+	auto& callback2 = EventTests::handler->getOnKeyReleased();
+
+	callback2(kre);
+
+	after = kre.handled();
+
+	EXPECT_FALSE(before);
+	EXPECT_TRUE(after);
+
+	before = kte.handled();
+
+	auto& callback3 = EventTests::handler->getOnKeyType();
+
+	callback3(kte);
+
+	after = kte.handled();
+
+	EXPECT_FALSE(before);
+	EXPECT_TRUE(after);
+
+}
+
+TEST(EventTest, MouseEventHandledCorrectly) {
+
+	if (!EventTests::handler) EventTests::init();
+
+	Engine::MouseButtonPressedEvent mbpe(1);
+	Engine::MouseButtonReleasedEvent mbre(1);
+	Engine::MouseMovedEvent mme(1, 1);
+	Engine::MouseScrolledEvent mse(1.f, 1.f);
+
+	bool before = mbpe.handled();
+
+	auto& callback1 = EventTests::handler->getOnMouseButtonPressed();
+
+	callback1(mbpe);
+
+	bool after = mbpe.handled();
+
+	EXPECT_FALSE(before);
+	EXPECT_TRUE(after);
+
+	before = mbre.handled();
+
+	auto& callback2 = EventTests::handler->getOnMouseButtonReleased();
+
+	callback2(mbre);
+
+	after = mbre.handled();
+
+	EXPECT_FALSE(before);
+	EXPECT_TRUE(after);
+
+	before = mme.handled();
+
+	auto& callback3 = EventTests::handler->getOnMouseMoved();
+
+	callback3(mme);
+
+	after = mme.handled();
+
+	EXPECT_FALSE(before);
+	EXPECT_TRUE(after);
+
+	before = mse.handled();
+
+	auto& callback4 = EventTests::handler->getOnMouseScrolled();
+
+	callback4(mse);
+
+	after = mse.handled();
+
+	EXPECT_FALSE(before);
+	EXPECT_TRUE(after);
+
+}
+
 
 TEST(Events, ResizeConstructor) {
 	Engine::WindowResizeEvent e(800, 600);

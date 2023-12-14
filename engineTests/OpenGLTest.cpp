@@ -18,3 +18,25 @@ TEST(OpenGL, VertexArrayBufferNull)
 
 	EXPECT_EQ(size, 0);
 }
+
+TEST(OpenGL, noIndexBufferCountNull)
+{
+	Engine::VertexArray vao;
+
+	uint32_t count = vao.getDrawCount();
+
+	EXPECT_EQ(count, 0);
+}
+
+TEST(OpenGL, UniformBufferConstructor)
+{
+	//GLFW_GL_mock mock;
+	Engine::UniformBufferLayout layout = { { "u_projection", Engine::ShaderDataType::Mat4 }, { "u_view", Engine::ShaderDataType::Mat4 } };
+	Engine::OpenGLUniformBuffer ubo(layout);
+
+	uint32_t id = ubo.getRenderID();
+
+	EXPECT_EQ(id, 1);
+
+
+}
