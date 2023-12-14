@@ -5,14 +5,62 @@ TEST(EventTest, HandledCorrectly) {
 	if (!EventTests::handler) EventTests::init();
 
 	Engine::WindowCloseEvent wce;
+	Engine::WindowFocusEvent wfe;
+	Engine::WindowLostFocusEvent wlfe;
+	Engine::WindowMovedEvent wme(1.f, 1.f);
+	Engine::WindowResizeEvent wre(1.f, 1.f);
 
 	bool before = wce.handled();
 
-	auto& callback = EventTests::handler->getOnWinClose();
+	auto& callback1 = EventTests::handler->getOnWinClose();
 
-	callback(wce);
+	callback1(wce);
 
 	bool after = wce.handled();
+
+	EXPECT_FALSE(before);
+	EXPECT_TRUE(after);
+
+	before = wfe.handled();
+
+	auto& callback2 = EventTests::handler->getOnWinFocus();
+
+	callback2(wfe);
+
+	after = wfe.handled();
+
+	EXPECT_FALSE(before);
+	EXPECT_TRUE(after);
+
+	before = wlfe.handled();
+
+	auto& callback3 = EventTests::handler->getOnWinLostFocus();
+
+	callback3(wlfe);
+
+	after = wlfe.handled();
+
+	EXPECT_FALSE(before);
+	EXPECT_TRUE(after);
+
+	before = wme.handled();
+
+	auto& callback4 = EventTests::handler->getOnWinMoved();
+
+	callback4(wme);
+
+	after = wme.handled();
+
+	EXPECT_FALSE(before);
+	EXPECT_TRUE(after);
+
+	before = wre.handled();
+
+	auto& callback5 = EventTests::handler->getOnWinResize();
+
+	callback5(wre);
+
+	after = wre.handled();
 
 	EXPECT_FALSE(before);
 	EXPECT_TRUE(after);
@@ -39,3 +87,4 @@ TEST(Events, ResizeConstructor) {
 	EXPECT_EQ(type, Engine::EventType::WindowResize);
 	
 }
+
