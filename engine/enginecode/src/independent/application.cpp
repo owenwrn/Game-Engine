@@ -24,6 +24,8 @@
 #include "rendering/Renderer3D.h"
 #include "rendering/Renderer2D.h"
 #include "platform/OpenGL/OpenGLUniformBuffer.h"
+#include "cameras/FreeOrthoController.h"
+#include "cameras/FreeEulerController.h"
 
 
 namespace Engine {
@@ -326,9 +328,28 @@ namespace Engine {
 		);
 		glm::mat4 projection = glm::perspective(glm::radians(45.f), 1024.f / 800.f, 0.1f, 100.f);
 
-		FreeEulerParams eulerParams;
-		m_camera.reset(new FreeEulerController(eulerParams));
+	/*	FreeOrthoParams orthoParams;
+		orthoParams.size = { m_window->getWidth(), m_window->getHeight() };
 
+		std::shared_ptr<FreeOthroController> orthoCam;*/
+		//orthoCam.reset(new FreeOthroController(orthoParams));
+
+		FreeEulerParams eulerParams;
+		eulerParams.aspectRatio = 4.f / 3.f;
+		eulerParams.farClip = 100.f;		
+		eulerParams.nearClip = 0.1f;
+		eulerParams.fovY = 45.f;
+		eulerParams.sensitivity = 1000.f;
+		eulerParams.speed = 5.f;
+		eulerParams.ScrHeight = m_window->getHeight();
+		eulerParams.ScrWidth = m_window->getWidth();
+
+		std::shared_ptr<FreeEulerController> eulerCam;
+		eulerCam.reset(new FreeEulerController(eulerParams));
+
+		m_camera = eulerCam;
+
+		
 
 		//// Camera UBO
 		uint32_t blockNumber = 0;
@@ -366,9 +387,6 @@ namespace Engine {
 		glm::vec3 lightColour(1.f, 1.f, 1.f);
 		glm::vec3 lightPos(1.f, 4.f, 6.f);
 		glm::vec3 viewPos(0.f, 0.f, 0.f);
-
-
-
 
 		/*
 		uint32_t lightDataSize = sizeof(glm::vec4) * 3;
@@ -409,12 +427,8 @@ namespace Engine {
 		glm::mat4 projection2D = glm::ortho(0.f, static_cast<float>(m_window->getWidth()), static_cast<float>(m_window->getHeight()), 0.f);
 
 		SceneWideUniforms swu3D;
-		glm::vec3 lightData[3] = { { 1.f, 1.f, 1.f}, {1.f, 4.f, 6.f}, { 0.f, 0.f, 0.f} };
-		/*swu3D["u_view"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(view)));
-		swu3D["u_projection"] = std::pair<ShaderDataType, void *>(ShaderDataType::Mat4, static_cast<void *>(glm::value_ptr(projection)));*/
-		/*swu3D["u_lightColour"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[0])));
-		swu3D["u_lightPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[1])));
-		swu3D["u_viewPos"] = std::pair<ShaderDataType, void *>(ShaderDataType::Float3, static_cast<void *>(glm::value_ptr(lightData[2])));*/
+		/*swu3D["u_projection"] = std::pair<ShaderDataType, void*>(ShaderDataType::Mat4, static_cast<void*>(glm::value_ptr(m_camera->getCamera().projection)));
+		swu3D["u_view"] = std::pair<ShaderDataType, void*>(ShaderDataType::Mat4, static_cast<void*>(glm::value_ptr(m_camera->getCamera().view)));*/
 
 		SceneWideUniforms swu2D;
 		swu2D["u_view"] = std::pair<ShaderDataType, void*>(ShaderDataType::Mat4, static_cast<void*>(glm::value_ptr(view2D)));
@@ -489,6 +503,10 @@ namespace Engine {
 			Renderer2D::end();
 
 			glDisable(GL_BLEND);
+
+			glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO->getRenderID());
+			cameraUBO->uploadData("u_projection", glm::value_ptr(m_camera->getCamera().projection));
+			cameraUBO->uploadData("u_view", glm::value_ptr(m_camera->getCamera().view));
 
 			m_camera->onUpdate(timestep);
 			m_window->onUpdate(timestep);

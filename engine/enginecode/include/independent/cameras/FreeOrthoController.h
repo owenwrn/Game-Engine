@@ -18,6 +18,7 @@ namespace Engine
 	public:
 		FreeOthroController(const FreeOrthoParams& params);
 		void onUpdate(float timestep) override;
+		void onResize(WindowResizeEvent& e) override;
 
 	private:
 		glm::mat4 m_model;

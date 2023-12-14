@@ -8,7 +8,7 @@
 #include "events/events.h"
 #include "window.h"
 #include "platform/GLFW/inputPoller.h"
-#include "cameras/FreeEulerController.h"
+#include "cameras/camera.h"
 
 
 namespace Engine {

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "event.h"
+#include <glm/glm.hpp>
 
 namespace Engine
 {
@@ -25,7 +26,9 @@ namespace Engine
 		}
 		int32_t getWidth() const { return m_width; }
 		int32_t getHeight() const { return m_height; }
-		
+		int32_t getCatergoryFlags() const { return m_catFlags; }
+		EventType getType() const { return m_eventType; }
+		glm::vec2 getSize() const { return glm::vec2(m_width, m_height); }
 	protected:
 		int32_t m_width;
 		int32_t m_height;

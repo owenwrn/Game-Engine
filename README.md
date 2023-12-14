@@ -5,5 +5,10 @@ You MUST use this repo to submit your coursework.
 When you clone make sure you use recurse submodules.
 This is a tick box in visual studio or use the option --recurse-submodules at the command prompt.
 
-For Pyramid I, J, K, L is foward, left, down, right respectively 
+For Pyramid I, J, K, L is up, left, down, right respectively 
 U, O are rotate left and right respectively 
+
+For Euler Camera W, A, S, D is foward, left, back, right respectively
+Q, E is roll
+Arrow keys are for rotating 
+Mouse also is used to look around

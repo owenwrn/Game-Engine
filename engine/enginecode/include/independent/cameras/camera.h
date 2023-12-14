@@ -4,7 +4,8 @@
 #include <glm/glm.hpp>
 #include "platform/GLFW/inputPoller.h"
 #include "events/events.h"
-
+#include "systems/log.h"
+#include <glm/gtx/string_cast.hpp>
 namespace Engine
 {
 	/** \class Camera
@@ -26,6 +27,7 @@ namespace Engine
 	public: 
 		virtual Camera& getCamera() { return m_camera; } //!< Accessor for camera
 		virtual void onUpdate(float t) {}; //!< Can update the camera
+		virtual void onResize(WindowResizeEvent& e) {}; //!< Handle resize event
 		virtual glm::vec3& getPosition() = 0;  //!< Get the camera position
 	protected:
 		Camera m_camera; //!< Camera being controlled
