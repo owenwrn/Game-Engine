@@ -24,8 +24,9 @@
 #include "rendering/Renderer3D.h"
 #include "rendering/Renderer2D.h"
 #include "platform/OpenGL/OpenGLUniformBuffer.h"
-#include "cameras/FreeOrthoController.h"
+#include "cameras/FixedOrthoController.h"
 #include "cameras/FreeEulerController.h"
+#include "cameras/FollowController.h"
 
 
 namespace Engine {
@@ -321,6 +322,13 @@ namespace Engine {
 
 #pragma endregion
 
+		glm::vec3 pos(-2.0f, 0.f, -6.f);
+		float rot = 0.f;
+		glm::mat4 models[3];
+		models[0] = glm::translate(glm::mat4(1.0f), glm::vec3(-2.f, 0.f, -6.f));
+		models[1] = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, -6.f));
+		models[2] = glm::translate(glm::mat4(1.0f), glm::vec3(2.f, 0.f, -6.f));
+
 		glm::mat4 view = glm::lookAt(
 			glm::vec3(0.f, 0.f, 0.f),
 			glm::vec3(0.f, 0.f, -1.f),
@@ -328,15 +336,35 @@ namespace Engine {
 		);
 		glm::mat4 projection = glm::perspective(glm::radians(45.f), 1024.f / 800.f, 0.1f, 100.f);
 
-	/*	FreeOrthoParams orthoParams;
-		orthoParams.size = { m_window->getWidth(), m_window->getHeight() };
+#pragma region CAMERAS
 
-		std::shared_ptr<FreeOthroController> orthoCam;*/
-		//orthoCam.reset(new FreeOthroController(orthoParams));
+		FixedOrthoParams orthoParams;
+		orthoParams.position = glm::vec3(0.f);
+		orthoParams._near = -10.f;
+		orthoParams._far = 10.f;
+		orthoParams.top = m_window->getHeight() / 2;
+		orthoParams.bottom = -orthoParams.top;
+		orthoParams.right = m_window->getWidth() / 2;
+		orthoParams.left = -orthoParams.right;
+
+		std::shared_ptr<FixedOthroController> orthoCam;
+		orthoCam.reset(new FixedOthroController(orthoParams));
+
+		FollowParams followParams;
+		followParams.entityTransform = &models[0];
+		followParams.offset = glm::vec3(0.f, 1.f, 4.f);
+		followParams.aspectRatio = 4.f / 3.f;
+		followParams.farClip = 100.f;
+		followParams.nearClip = 0.1f;
+		followParams.fovY = 45.f;
+
+
+		std::shared_ptr<FollowController> followCam;
+		followCam.reset(new FollowController(followParams));
 
 		FreeEulerParams eulerParams;
 		eulerParams.aspectRatio = 4.f / 3.f;
-		eulerParams.farClip = 100.f;		
+		eulerParams.farClip = 100.f;
 		eulerParams.nearClip = 0.1f;
 		eulerParams.fovY = 45.f;
 		eulerParams.sensitivity = 1000.f;
@@ -349,7 +377,7 @@ namespace Engine {
 
 		m_camera = eulerCam;
 
-		
+#pragma endregion
 
 		//// Camera UBO
 		uint32_t blockNumber = 0;
@@ -416,19 +444,16 @@ namespace Engine {
 		lightsUBO->uploadData("u_viewPos", glm::value_ptr(viewPos));
 		lightsUBO->uploadData("u_lightColour", glm::value_ptr(lightColour));
 
-		glm::vec3 pos(-2.0f, 0.f, -6.f);
-		float rot = 0.f;
-		glm::mat4 models[3];
-		models[0] = glm::translate(glm::mat4(1.0f), glm::vec3(-2.f, 0.f, -6.f));
-		models[1] = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, -6.f));
-		models[2] = glm::translate(glm::mat4(1.0f), glm::vec3(2.f, 0.f, -6.f));
-
 		glm::mat4 view2D = glm::mat4(1.f);
 		glm::mat4 projection2D = glm::ortho(0.f, static_cast<float>(m_window->getWidth()), static_cast<float>(m_window->getHeight()), 0.f);
 
 		SceneWideUniforms swu3D;
 		/*swu3D["u_projection"] = std::pair<ShaderDataType, void*>(ShaderDataType::Mat4, static_cast<void*>(glm::value_ptr(m_camera->getCamera().projection)));
 		swu3D["u_view"] = std::pair<ShaderDataType, void*>(ShaderDataType::Mat4, static_cast<void*>(glm::value_ptr(m_camera->getCamera().view)));*/
+
+		SceneWideUniforms swuOrtho;
+		swu3D["u_projection"] = std::pair<ShaderDataType, void*>(ShaderDataType::Mat4, static_cast<void*>(glm::value_ptr(m_camera->getCamera().projection)));
+		swu3D["u_view"] = std::pair<ShaderDataType, void*>(ShaderDataType::Mat4, static_cast<void*>(glm::value_ptr(m_camera->getCamera().view)));
 
 		SceneWideUniforms swu2D;
 		swu2D["u_view"] = std::pair<ShaderDataType, void*>(ShaderDataType::Mat4, static_cast<void*>(glm::value_ptr(view2D)));
@@ -458,12 +483,16 @@ namespace Engine {
 			m_timer->reset();
 			//Log::trace("FPS {0}", 1.0f / timestep);
 
+			if (InputPoller::isKeyPressed(NG_KEY_T)) { m_camera = followCam; }
+
 			models[0] = glm::translate(glm::mat4(1.0f), pos) * glm::rotate(glm::mat4(1.0f), rot, glm::vec3(0.f, 1.0f, 0.f));
 
 			if (InputPoller::isKeyPressed(NG_KEY_J)) { pos.x -= timestep, 0.f, 0.f; }
 			if (InputPoller::isKeyPressed(NG_KEY_L)) { pos.x += timestep, 0.f, 0.f; }
-			if (InputPoller::isKeyPressed(NG_KEY_I)) { pos.y += timestep, 0.f, 0.f; }
-			if (InputPoller::isKeyPressed(NG_KEY_K)) { pos.y -= timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_I)) { pos.z += timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_K)) { pos.z -= timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_M)) { pos.y -= timestep, 0.f, 0.f; }
+			if (InputPoller::isKeyPressed(NG_KEY_N)) { pos.y += timestep, 0.f, 0.f; }
 			
 			if (InputPoller::isKeyPressed(NG_KEY_U)) { rot += timestep; }
 			if (InputPoller::isKeyPressed(NG_KEY_O)) { rot -= timestep; }
@@ -476,6 +505,7 @@ namespace Engine {
 
 			glEnable(GL_DEPTH_TEST);
 
+			
 			Renderer3D::begin(swu3D);
 
 			Renderer3D::submit(pyramidVAO, pyramidMat, models[0]);
