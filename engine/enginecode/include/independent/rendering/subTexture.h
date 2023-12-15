@@ -28,6 +28,6 @@ namespace Engine
 		std::shared_ptr<OpenGLTexture> m_texture;
 		glm::vec2 m_UVStart;
 		glm::vec2 m_UVEnd;
-		glm::ivec2 m_size;
+		glm::ivec2 m_size; //!< Size in pixels
 	};
 }

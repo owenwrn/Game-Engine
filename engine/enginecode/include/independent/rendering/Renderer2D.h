@@ -48,7 +48,7 @@ namespace Engine
 		static void submit(const Quad& quad, const SubTexture& texture, float angle, bool degrees = false); //!< Render a roatated and textured quad
 		static void submit(const Quad& quad, const SubTexture& texture, const glm::vec4& tint, float angle, bool degrees = false); //!< Render a roatated, textured and tint quad
 		static void end(); //!< End the current 2D scene
-		static void flush();
+		static void flush(); //!< Flush the current 2D scene
 
 	private:
 
@@ -57,15 +57,15 @@ namespace Engine
 			std::shared_ptr<OpenGLTexture> defaultTexture; //!< Empty white texture
 			SubTexture defaultSubTexture; //!< Default SubTexture
 			glm::vec4 defaultTint; //!< Default white tint
-			std::shared_ptr<OpenGLShader> shader;
-			std::shared_ptr<VertexArray> VAO;
-			std::shared_ptr<OpenGLUniformBuffer> UBO;
-			glm::mat4 model;
-			std::array<glm::vec4, 4> quad;
-			static const uint32_t batchSize = 1024;
-			uint32_t drawCount;
+			std::shared_ptr<OpenGLShader> shader; //!< Shader
+			std::shared_ptr<VertexArray> VAO; //!< Vertex array
+			std::shared_ptr<OpenGLUniformBuffer> UBO; //!< uniform buffer object
+			glm::mat4 model; //!< model
+			std::array<glm::vec4, 4> quad; 
+			static const uint32_t batchSize = 1024;//!< 2D RendererBatch Size
+			uint32_t drawCount; //!< Draw count
 			std::vector<Renderer2DVertex> vertices;
-			std::array<int32_t, 32> textureUnits;
+			std::array<int32_t, 32> textureUnits; //!< Texture unit
 		};
 
 		static std::shared_ptr<InternalData> s_data; //!< Data internal to the render

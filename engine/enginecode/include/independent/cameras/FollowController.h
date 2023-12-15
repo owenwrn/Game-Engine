@@ -17,10 +17,10 @@ namespace Engine
 	class FollowController : public CameraController
 	{
 	public:
-		FollowController(const FollowParams& params);
-		void onUpdate(float timestep) override;
-		glm::vec3& getPosition() override { return m_position; }
-		glm::vec3& getEntityPosition() { return m_entityPosition; }
+		FollowController(const FollowParams& params); //!< Constructor
+		void onUpdate(float timestep) override; //!< Can update the camera
+		glm::vec3& getPosition() override { return m_position; } //!< Get the camera position
+		glm::vec3& getEntityPosition() { return m_entityPosition; } //!< Get the Entities position
 	private:
 		glm::vec3 m_position; //<! camera position
 		glm::vec3 m_entityPosition; //!< Entities position

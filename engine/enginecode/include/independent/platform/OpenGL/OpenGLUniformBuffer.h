@@ -11,10 +11,10 @@ namespace Engine
 	public:
 		OpenGLUniformBuffer(const UniformBufferLayout& layout); //!< Constructor
 		~OpenGLUniformBuffer(); //!< Destuctor
-		inline uint32_t getRenderID() { return m_OpenGL_ID;  }
-		inline UniformBufferLayout getLayout() { return m_layout;  }
-		void attachShaderBlock(const std::shared_ptr<OpenGLShader>& shader, const char* blockName);
-		void uploadData(const char* uniformName, void* data);
+		inline uint32_t getRenderID() { return m_OpenGL_ID;  } //!< Returns OpenGL ID
+		inline UniformBufferLayout getLayout() { return m_layout;  } //!< Returns Uniform buffer layout
+		void attachShaderBlock(const std::shared_ptr<OpenGLShader>& shader, const char* blockName); //!< Attatchs to shader block
+		void uploadData(const char* uniformName, void* data); //!< Uploads data
 
 		//TODO renderAPI
 		//static UniformBuffer* create(const UniformBufferLayout& layout);

@@ -23,8 +23,8 @@ namespace Engine
 			auto transform = glm::translate(glm::mat4(1.f), m_position);
 			m_camera.view = glm::inverse(transform);
 			m_camera.projection = glm::ortho(params.left, params.right, params.bottom, params.top);
-		}
-		glm::vec3& getPosition() override { return m_position;  }
+		} //!< Constructor
+		glm::vec3& getPosition() override { return m_position;  } //!< Get the camera position
 
 	private:
 

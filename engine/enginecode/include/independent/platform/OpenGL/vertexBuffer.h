@@ -11,14 +11,14 @@ namespace Engine
 	public:
 		VertexBuffer(void* vertices, uint32_t size, VertexBufferLayout layout); //!< Default Constructor
 		~VertexBuffer(); //!< Destructor
-		void edit(void* vertices, uint32_t size, uint32_t offset);
-		inline uint32_t getRenderID() const { return m_OpenGL_ID; }
-		inline const VertexBufferLayout getLayout() const { return m_layout; }
+		void edit(void* vertices, uint32_t size, uint32_t offset); //!< Edits buffer
+		inline uint32_t getRenderID() const { return m_OpenGL_ID; } //!<  Returns OpenGL ID
+		inline const VertexBufferLayout getLayout() const { return m_layout; } //!< Returns vertex buffer layout
 
 
 	private:
 		uint32_t m_OpenGL_ID; //!< RenderID
-		VertexBufferLayout m_layout;
+		VertexBufferLayout m_layout; //!< Vertex buffer layout
 	};
 
 }

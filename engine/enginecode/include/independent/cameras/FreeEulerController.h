@@ -21,16 +21,16 @@ namespace Engine
 	class FreeEulerController : public CameraController
 	{
 	public:
-		FreeEulerController(const FreeEulerParams& params);
-		void onUpdate(float timestep) override;
-		glm::vec3& getPosition() override { return m_position; }
+		FreeEulerController(const FreeEulerParams& params); //!< Constructor
+		void onUpdate(float timestep) override; //!< Can update the camera
+		glm::vec3& getPosition() override { return m_position; } //!< Get the camera position
 	private:
 		FreeEulerParams m_params;
-		glm::vec3 m_position;
-		glm::mat4 m_orientation;
-		glm::mat4 m_transform;
-		glm::vec2 m_lastMousePos;
-		glm::vec3 m_rotation;
+		glm::vec3 m_position; //<! Position of camera
+		glm::mat4 m_orientation; //<! Orientation of the camera
+		glm::mat4 m_transform; //<! Camera transform
+		glm::vec2 m_lastMousePos; //<! Last mouse position
+		glm::vec3 m_rotation; //<! Camera rotation
 	};
 }
 
