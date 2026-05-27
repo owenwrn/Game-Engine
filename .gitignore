@@ -2,7 +2,7 @@
 .vs/
 bin/
 build/
-
+builds/
 # Files
 *.user
 *.vcxproj
